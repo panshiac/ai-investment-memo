@@ -69,7 +69,21 @@ p, div, span {
 </style>
 """, unsafe_allow_html=True)
 
-st.title("AI Investment Memo Generator")
+st.markdown("""
+<div style="
+    text-align:center;
+    padding: 20px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #0f172a, #1e293b);
+    margin-bottom: 20px;
+">
+    <h1 style="color:#38bdf8; margin-bottom:5px;">📈 AI Investment Memo Generator</h1>
+    <p style="color:#cbd5e1; font-size:16px;">
+        Generate institutional-grade investment memos from company data or PDFs
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
 st.caption("Generate structured investment memos from company names or uploaded PDF reports.")
 
 st.info("For educational and informational purposes only. This is not financial advice.")
