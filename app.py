@@ -72,3 +72,10 @@ if st.button("Generate Memo"):
 
     st.subheader("Generated Memo")
     st.write(memo)
+
+    st.download_button(
+        label="Download Memo",
+        data=memo,
+        file_name=f"{company_name}_investment_memo.md",
+        mime="text/markdown"
+    )
