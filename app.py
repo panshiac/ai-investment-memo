@@ -10,6 +10,45 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 st.set_page_config(page_title="AI Investment Memo Generator", layout="wide")
 
+st.markdown("""
+<style>
+
+.stApp {
+    background: linear-gradient(to bottom right, #0f172a, #1e293b);
+    color: white;
+}
+
+h1 {
+    color: #38bdf8;
+    text-align: center;
+}
+
+.stButton>button {
+    background-color: #38bdf8;
+    color: white;
+    border-radius: 10px;
+    height: 3em;
+    width: 100%;
+    font-size: 18px;
+    border: none;
+}
+
+.stButton>button:hover {
+    background-color: #0ea5e9;
+    color: white;
+}
+
+.stTextInput>div>div>input {
+    border-radius: 10px;
+}
+
+.stSelectbox>div>div {
+    border-radius: 10px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.title("AI Investment Memo Generator")
 st.caption("Generate structured investment memos from company names or uploaded PDF reports.")
 
