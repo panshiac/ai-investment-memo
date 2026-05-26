@@ -128,44 +128,6 @@ def extract_pdf_text(file):
 
 if st.button("Generate Memo"):
 
-    document_text = ""
-
-    if uploaded_file is not None:
-        document_text = extract_pdf_text(uploaded_file)
-
-    prompt = f"""
-    You are a senior equity research analyst at a top-tier investment bank.
-
-    Create a structured investment memo for {company_name}.
-
-    If a PDF document is uploaded, use it as the primary source.
-    If no PDF is uploaded, generate the memo using your general knowledge about the company.
-
-    Memo style: {memo_style}
-
-    Include:
-
-    1. Executive Summary (max 5 bullet points)
-    2. Company Overview
-    3. Business Model
-    4. Industry & Competitive Positioning
-    5. Growth Drivers
-    6. Key Risks (be critical, not generic)
-    7. Financial Health (qualitative if no numbers available)
-    8. SWOT Analysis (bullet format)
-    9. Investment Recommendation:
-       - Rating: Buy / Hold / Sell
-       - Confidence Score (0–100%)
-       - Time Horizon (short / medium / long term)
-
-    10. Bull Case vs Bear Case
-    11. Key Questions for Due Diligence
-
-    Use professional financial language.
-
-    PDF TEXT:
-    {document_text[:8000]}
-   """
     with st.spinner("Generating memo..."):
 
         response = client.responses.create(
