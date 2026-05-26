@@ -143,23 +143,29 @@ if st.button("Generate Memo"):
 
     Memo style: {memo_style}
 
-    Include:
-    1. Executive Summary
-    2. Company Overview
-    3. Business Model
-    4. Industry & Competitive Positioning
-    5. Growth Drivers
-    6. Key Risks
-    7. Financial Health
-    8. SWOT Analysis
-    9. Investment Recommendation
-    10. Bull vs Bear Case
-    11. Key Questions
+    Return your answer in this EXACT structure:
+
+    EXECUTIVE SUMMARY:
+    - ...
+
+    RISKS:
+    - ...
+
+    SWOT:
+    - Strengths:
+    - Weaknesses:
+    - Opportunities:
+    - Threats:
+
+    RECOMMENDATION:
+    - Rating: Buy / Hold / Sell
+    - Confidence Score:
+    - Time Horizon:
 
     PDF TEXT:
     {document_text[:8000]}
     """
-
+    
     with st.spinner("Generating memo..."):
 
         response = client.responses.create(
