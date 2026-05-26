@@ -133,7 +133,7 @@ if st.button("Generate Memo"):
     if uploaded_file is not None:
         document_text = extract_pdf_text(uploaded_file)
 
-prompt = f"""
+    prompt = f"""
 You are a senior equity research analyst.
 
 Create a structured investment memo.
@@ -161,23 +161,23 @@ PDF TEXT:
 Do NOT use HTML.
 Do NOT add extra sections.
 """
-    
-with st.spinner("Generating memo..."):
 
-    response = client.responses.create(
-        model="gpt-4.1",
-        input=prompt
+    with st.spinner("Generating memo..."):
+
+        response = client.responses.create(
+            model="gpt-4.1",
+            input=prompt
         )
 
-    memo = response.output_text
+        memo = response.output_text
 
-st.subheader("📄 Investment Memo")
+    st.subheader("📄 Investment Memo")
 
-st.markdown(memo)
+    st.markdown(memo)
 
-st.download_button(
-    label="Download Memo",
-    data=memo,
-    file_name=f"{company_name}_investment_memo.md",
-    mime="text/markdown"
-)
+    st.download_button(
+        label="Download Memo",
+        data=memo,
+        file_name=f"{company_name}_investment_memo.md",
+        mime="text/markdown"
+    )
