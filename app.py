@@ -141,6 +141,7 @@ if st.button("Generate Memo"):
     Use clear section headers exactly like this:
 
     EXECUTIVE SUMMARY
+    Write as a single professional paragraph (no bullet points).
     RISKS
     SWOT
     RECOMMENDATION
@@ -169,20 +170,41 @@ if st.button("Generate Memo"):
 
     st.subheader("📄 Investment Memo")
 
-    st.subheader("📄 Investment Memo")
-
     st.markdown(f"""
     <div style="
         background-color:#0b1220;
-        padding:20px;
+        padding:24px;
         border-radius:12px;
         border:1px solid #334155;
-        white-space:pre-wrap;
         color:#e5e7eb;
         font-size:15px;
         line-height:1.6;
     ">
-    {memo}
+
+    <div style="font-size:22px; font-weight:700; margin-bottom:10px; color:#38bdf8;">
+    EXECUTIVE SUMMARY
+    </div>
+
+    {memo.split("RISKS")[0] if "RISKS" in memo else memo}
+
+    <div style="font-size:22px; font-weight:700; margin-top:20px; margin-bottom:10px; color:#f87171;">
+    RISKS
+    </div>
+
+    {memo.split("RISKS")[1].split("SWOT")[0] if "RISKS" in memo and "SWOT" in memo else ""}
+
+    <div style="font-size:22px; font-weight:700; margin-top:20px; margin-bottom:10px; color:#fbbf24;">
+    SWOT
+    </div>
+
+    {memo.split("SWOT")[1].split("RECOMMENDATION")[0] if "SWOT" in memo else ""}
+
+    <div style="font-size:22px; font-weight:700; margin-top:20px; margin-bottom:10px; color:#34d399;">
+    RECOMMENDATION
+    </div>
+
+    {memo.split("RECOMMENDATION")[1] if "RECOMMENDATION" in memo else ""}
+
     </div>
     """, unsafe_allow_html=True)
 
