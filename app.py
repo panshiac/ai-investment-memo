@@ -177,20 +177,37 @@ if st.button("Generate Memo"):
 
     st.subheader("📄 Investment Memo")
 
-    st.markdown(f"""
-    <div style="
-        background-color:#0b1220;
-        padding:20px;
-        border-radius:12px;
-        border:1px solid #334155;
-        white-space:pre-wrap;
-        color:#e5e7eb;
-        font-size:15px;
-        line-height:1.6;
-    ">
-    {memo}
-    </div>
-    """, unsafe_allow_html=True)
+    tabs = st.tabs([
+        "📌 Full Memo",
+        "⚠️ Risks",
+        "📊 SWOT",
+        "💡 Recommendation"
+    ])
+
+    with tabs[0]:
+        st.markdown(f"""
+        <div style="
+            background-color:#0b1220;
+            padding:20px;
+            border-radius:12px;
+            border:1px solid #334155;
+            white-space:pre-wrap;
+            color:#e5e7eb;
+            font-size:15px;
+            line-height:1.6;
+        ">
+        {memo}
+        </div>
+        """, unsafe_allow_html=True)
+
+    with tabs[1]:
+        st.markdown("Risks section will be extracted in Step 3")
+
+    with tabs[2]:
+        st.markdown("SWOT section will be extracted in Step 3")
+
+    with tabs[3]:
+        st.markdown("Recommendation section will be extracted in Step 3")
 
     st.download_button(
         label="Download Memo",
