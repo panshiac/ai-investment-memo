@@ -88,15 +88,32 @@ st.caption("Generate structured investment memos from company names or uploaded 
 
 st.info("For educational and informational purposes only. This is not financial advice.")
 
-company_name = st.text_input("Enter company name")
+col1, col2 = st.columns([1, 1])
 
-memo_style = st.selectbox(
-    "Select memo style",
-    ["Conservative", "Neutral", "Aggressive"]
-)
+with col1:
+    company_name = st.text_input("Enter company name")
 
-uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
+    memo_style = st.selectbox(
+        "Select memo style",
+        ["Conservative", "Neutral", "Aggressive"]
+    )
 
+    uploaded_file = st.file_uploader(
+        "Upload a PDF (optional)",
+        type=["pdf"]
+    )
+
+with col2:
+    st.markdown("""
+    ### 📊 How to use
+    - Enter a company name
+    - Optionally upload a report (10-K, annual report)
+    - Choose memo style
+    - Click generate
+
+    ### 💡 Tip
+    Uploading a PDF improves accuracy significantly.
+    """)
 def extract_pdf_text(file):
     reader = PdfReader(file)
     text = ""
