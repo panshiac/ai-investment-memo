@@ -25,26 +25,12 @@ if st.button("Generate Memo"):
     Use professional financial language.
     """
 
-    memo = f"""
-# Investment Memo: {company_name}
+    response = client.responses.create(
+        model="gpt-4.1",
+        input=prompt
+    )
 
-## Company Overview
-{company_name} operates in a growing market with strong brand recognition and significant scalability potential.
+    memo = response.output_text
 
-## Growth Opportunities
-- Expansion into international markets
-- Product diversification
-- Increased operational efficiency
-- AI and technology integration
-
-## Risks
-- Competitive pressure
-- Regulatory uncertainty
-- Macroeconomic volatility
-- Execution risk
-
-## Investment Outlook
-{company_name} appears to have attractive long-term growth potential, though investors should carefully monitor profitability and market conditions.
-"""
     st.subheader("Generated Memo")
     st.write(memo)
