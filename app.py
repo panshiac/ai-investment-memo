@@ -61,12 +61,13 @@ if st.button("Generate Memo"):
     {document_text[:8000]}
     """
 
+with st.spinner("Generating memo..."):
+
     response = client.responses.create(
         model="gpt-4.1",
         input=prompt
     )
 
     memo = response.output_text
-
     st.subheader("Generated Memo")
     st.write(memo)
