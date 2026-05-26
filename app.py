@@ -163,21 +163,36 @@ if st.button("Generate Memo"):
     {document_text[:8000]}
     """
 
-    with st.spinner("Generating memo..."):
+with st.spinner("Generating memo..."):
 
-        response = client.responses.create(
-            model="gpt-4.1",
-            input=prompt
+    response = client.responses.create(
+        model="gpt-4.1",
+        input=prompt
     )
 
     memo = response.output_text
 
-    st.subheader("Generated Memo")
-    st.write(memo)
 
-    st.download_button(
-        label="Download Memo",
-        data=memo,
-        file_name=f"{company_name}_investment_memo.md",
-        mime="text/markdown"
-    )
+st.subheader("📄 Investment Memo")
+
+st.markdown(f"""
+<div style="
+    background-color:#0b1220;
+    padding:20px;
+    border-radius:12px;
+    border:1px solid #334155;
+    white-space:pre-wrap;
+    color:#e5e7eb;
+    font-size:15px;
+    line-height:1.6;
+">
+{memo}
+</div>
+""", unsafe_allow_html=True)
+
+st.download_button(
+    label="Download Memo",
+    data=memo,
+    file_name=f"{company_name}_investment_memo.md",
+    mime="text/markdown"
+)
