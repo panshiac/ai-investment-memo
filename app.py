@@ -134,38 +134,30 @@ if st.button("Generate Memo"):
         document_text = extract_pdf_text(uploaded_file)
 
     prompt = f"""
-    You are a senior equity research analyst at a top-tier investment bank.
+    You are a senior equity research analyst.
 
-    Create a structured investment memo for {company_name}.
+    Return a clean, well-formatted investment memo.
 
-    If a PDF document is uploaded, use it as the primary source.
-    If no PDF is uploaded, generate the memo using your general knowledge.
+    Use clear section headers exactly like this:
+
+    EXECUTIVE SUMMARY
+    RISKS
+    SWOT
+    RECOMMENDATION
+
+    Formatting rules:
+    - Use bullet points
+    - Keep it concise
+    - No long paragraphs
+    - Make it professional and structured
 
     Memo style: {memo_style}
 
-    Return your answer in this EXACT structure:
-
-    EXECUTIVE SUMMARY:
-    - ...
-
-    RISKS:
-    - ...
-
-    SWOT:
-    - Strengths:
-    - Weaknesses:
-    - Opportunities:
-    - Threats:
-
-    RECOMMENDATION:
-    - Rating: Buy / Hold / Sell
-    - Confidence Score:
-    - Time Horizon:
+    Company: {company_name}
 
     PDF TEXT:
     {document_text[:8000]}
-    """
-    
+    """    
     with st.spinner("Generating memo..."):
 
         response = client.responses.create(
@@ -177,37 +169,22 @@ if st.button("Generate Memo"):
 
     st.subheader("📄 Investment Memo")
 
-    tabs = st.tabs([
-        "📌 Full Memo",
-        "⚠️ Risks",
-        "📊 SWOT",
-        "💡 Recommendation"
-    ])
+    st.subheader("📄 Investment Memo")
 
-    with tabs[0]:
-        st.markdown(f"""
-        <div style="
-            background-color:#0b1220;
-            padding:20px;
-            border-radius:12px;
-            border:1px solid #334155;
-            white-space:pre-wrap;
-            color:#e5e7eb;
-            font-size:15px;
-            line-height:1.6;
-        ">
-        {memo}
-        </div>
-        """, unsafe_allow_html=True)
-
-    with tabs[1]:
-        st.markdown("Risks section will be extracted in Step 3")
-
-    with tabs[2]:
-        st.markdown("SWOT section will be extracted in Step 3")
-
-    with tabs[3]:
-        st.markdown("Recommendation section will be extracted in Step 3")
+    st.markdown(f"""
+    <div style="
+        background-color:#0b1220;
+        padding:20px;
+        border-radius:12px;
+        border:1px solid #334155;
+        white-space:pre-wrap;
+        color:#e5e7eb;
+        font-size:15px;
+        line-height:1.6;
+    ">
+    {memo}
+    </div>
+    """, unsafe_allow_html=True)
 
     st.download_button(
         label="Download Memo",
