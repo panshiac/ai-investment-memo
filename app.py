@@ -164,10 +164,10 @@ Do NOT add extra sections.
     
 with st.spinner("Generating memo..."):
 
-response = client.responses.create(
-    model="gpt-4.1",
-    input=prompt
-    )
+    response = client.responses.create(
+        model="gpt-4.1",
+        input=prompt
+        )
 
     memo = response.output_text
 
@@ -180,4 +180,4 @@ st.download_button(
     data=memo,
     file_name=f"{company_name}_investment_memo.md",
     mime="text/markdown"
-    )
+)
