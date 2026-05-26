@@ -8,7 +8,12 @@ load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+st.set_page_config(page_title="AI Investment Memo Generator", layout="wide")
+
 st.title("AI Investment Memo Generator")
+st.caption("Generate structured investment memos from company names or uploaded PDF reports.")
+
+st.info("For educational and informational purposes only. This is not financial advice.")
 
 company_name = st.text_input("Enter company name")
 
