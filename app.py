@@ -12,6 +12,11 @@ st.title("AI Investment Memo Generator")
 
 company_name = st.text_input("Enter company name")
 
+memo_style = st.selectbox(
+    "Select memo style",
+    ["Conservative", "Neutral", "Aggressive"]
+)
+
 uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 
 def extract_pdf_text(file):
@@ -56,6 +61,8 @@ if st.button("Generate Memo"):
     9. Questions for Further Due Diligence
 
     Use professional financial language.
+
+    Memo style: {memo_style}
 
     PDF TEXT:
     {document_text[:8000]}
