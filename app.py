@@ -14,15 +14,44 @@ st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(to bottom right, #0f172a, #1e293b);
-    color: white;
+    background: linear-gradient(to bottom right, #0b1220, #111827);
+    color: #f8fafc;
 }
 
-h1 {
-    color: #38bdf8;
-    text-align: center;
+/* MAIN TEXT */
+h1, h2, h3, h4 {
+    color: #f8fafc !important;
 }
 
+/* normal text */
+p, div, span {
+    color: #e5e7eb !important;
+}
+
+/* captions */
+.stCaption {
+    color: #9ca3af !important;
+}
+
+/* input text */
+.stTextInput input {
+    color: black !important;
+    background-color: white !important;
+    font-size: 16px;
+}
+
+/* select box */
+.stSelectbox div {
+    color: black !important;
+}
+
+/* info box */
+.stAlert {
+    background-color: #1f2937 !important;
+    color: #f8fafc !important;
+}
+
+/* button */
 .stButton>button {
     background-color: #38bdf8;
     color: white;
@@ -35,15 +64,6 @@ h1 {
 
 .stButton>button:hover {
     background-color: #0ea5e9;
-    color: white;
-}
-
-.stTextInput>div>div>input {
-    border-radius: 10px;
-}
-
-.stSelectbox>div>div {
-    border-radius: 10px;
 }
 
 </style>
