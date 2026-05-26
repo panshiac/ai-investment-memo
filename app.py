@@ -133,84 +133,51 @@ if st.button("Generate Memo"):
     if uploaded_file is not None:
         document_text = extract_pdf_text(uploaded_file)
 
-    prompt = f"""
-    You are a senior equity research analyst.
+prompt = f"""
+You are a senior equity research analyst.
 
-    Return a clean, well-formatted investment memo.
+Create a structured investment memo.
 
-    Use clear section headers exactly like this:
+Use EXACTLY these sections:
 
-    EXECUTIVE SUMMARY
-    Write as a single professional paragraph (no bullet points).
-    RISKS
-    SWOT
-    RECOMMENDATION
+## EXECUTIVE SUMMARY
+(one paragraph)
 
-    Formatting rules:
-    - Use bullet points
-    - Keep it concise
-    - No long paragraphs
-    - Make it professional and structured
+## RISKS
+(bullet points)
 
-    Memo style: {memo_style}
+## SWOT
+(bullet points)
 
-    Company: {company_name}
+## RECOMMENDATION
+(Buy/Hold/Sell + confidence score)
 
-    PDF TEXT:
-    {document_text[:8000]}
-    """    
-    with st.spinner("Generating memo..."):
+Memo style: {memo_style}
+Company: {company_name}
 
-        response = client.responses.create(
-            model="gpt-4.1",
-            input=prompt
-        )
+PDF TEXT:
+{document_text[:8000]}
 
-        memo = response.output_text
+Do NOT use HTML.
+Do NOT add extra sections.
+"""
+    
+with st.spinner("Generating memo..."):
 
-    st.subheader("📄 Investment Memo")
+response = client.responses.create(
+    model="gpt-4.1",
+    input=prompt
+    )
 
-    st.markdown(f"""
-    <div style="
-        background-color:#0b1220;
-        padding:24px;
-        border-radius:12px;
-        border:1px solid #334155;
-        color:#e5e7eb;
-        font-size:15px;
-        line-height:1.6;
-    ">
+    memo = response.output_text
 
-    <div style="font-size:22px; font-weight:700; margin-bottom:10px; color:#38bdf8;">
-    EXECUTIVE SUMMARY
-    </div>
+st.subheader("📄 Investment Memo")
 
-    {memo.split("RISKS")[0] if "RISKS" in memo else memo}
+st.markdown(memo)
 
-    <div style="font-size:22px; font-weight:700; margin-top:20px; margin-bottom:10px; color:#f87171;">
-    RISKS
-    </div>
-
-    {memo.split("RISKS")[1].split("SWOT")[0] if "RISKS" in memo and "SWOT" in memo else ""}
-
-    <div style="font-size:22px; font-weight:700; margin-top:20px; margin-bottom:10px; color:#fbbf24;">
-    SWOT
-    </div>
-
-    {memo.split("SWOT")[1].split("RECOMMENDATION")[0] if "SWOT" in memo else ""}
-
-    <div style="font-size:22px; font-weight:700; margin-top:20px; margin-bottom:10px; color:#34d399;">
-    RECOMMENDATION
-    </div>
-
-    {memo.split("RECOMMENDATION")[1] if "RECOMMENDATION" in memo else ""}
-
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.download_button(
-        label="Download Memo",
-        data=memo,
-        file_name=f"{company_name}_investment_memo.md",
-        mime="text/markdown"
+st.download_button(
+    label="Download Memo",
+    data=memo,
+    file_name=f"{company_name}_investment_memo.md",
+    mime="text/markdown"
     )
