@@ -210,14 +210,23 @@ Company: {company_name}
 PDF TEXT:
 {document_text[:8000]}
 
-FINANCIAL DATA:
-Name: {company_name}
+FINANCIAL DATA (USE THIS FOR ANALYSIS):
+
+Company: {company_name}
 Sector: {financials.get('sector', 'N/A')}
+
 Market Cap: {financials.get('marketCap', 'N/A')}
 Revenue: {financials.get('revenue', 'N/A')}
 Net Income: {financials.get('netIncome', 'N/A')}
-P/E Ratio: {financials.get('pe_ratio', 'N/A')}
 Debt: {financials.get('debt', 'N/A')}
+P/E Ratio: {financials.get('pe_ratio', 'N/A')}
+
+INSTRUCTIONS:
+- Use these metrics directly in your reasoning
+- Comment on valuation (cheap / fair / expensive)
+- Mention revenue scale and profitability
+- Highlight debt risk if high
+- Compare metrics to overall investment recommendation
 
 Do NOT use HTML.
 Do NOT add extra sections.
