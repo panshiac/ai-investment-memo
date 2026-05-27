@@ -26,11 +26,6 @@ h1, h2, h3, h4 {
     color: #f8fafc !important;
 }
 
-/* normal text */
-p, div, span {
-    color: #e5e7eb !important;
-}
-
 .stMarkdown, .stMarkdown p {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     line-height: 1.6 !important;
@@ -258,6 +253,14 @@ FORMATTING RULES (CRITICAL):
 IMPORTANT RULE:
 NEVER convert or reinterpret numeric units. All financial values are already pre-formatted. Do not rewrite "B" as "billion" or "trillion".
 
+FINAL OUTPUT RULES:
+- Write in strict financial report format
+- Do not vary number formatting under any circumstances
+- Always use "$" for monetary values
+- Always keep numbers exactly as provided (no reformatting)
+- Do not add extra commentary outside sections
+- Keep tone institutional and consistent (no casual language)
+
 PDF TEXT:
 {document_text[:8000]}
 
@@ -276,18 +279,7 @@ Do NOT add extra sections.
 
     st.subheader("📄 Investment Memo")
 
-    st.markdown(
-        f"""
-        <div style="
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            line-height: 1.6;
-            font-size: 15px;
-        ">
-        {memo}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown(memo)
 
     st.subheader("📈 Stock Price (1Y)")
 
