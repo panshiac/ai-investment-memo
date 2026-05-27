@@ -132,16 +132,16 @@ def get_financial_data(company):
     try:
         stock = yf.Ticker(company)
 
-        info = stock.fast_info
+        info = stock.info
 
         return {
-            "marketCap": info.get("marketCap"),
-            "lastPrice": info.get("regularMarketPrice"),
-            "sector": info.get("sector"),
-            "revenue": info.get("totalRevenue"),
-            "netIncome": info.get("netIncomeToCommon"),
-            "pe_ratio": info.get("trailingPE"),
-            "debt": info.get("totalDebt"),
+            "marketCap": info.get("marketCap",0),
+            "lastPrice": info.get("regularMarketPrice",0),
+            "sector": info.get("sector",0),
+            "revenue": info.get("totalRevenue",0),
+            "netIncome": info.get("netIncomeToCommon",0),
+            "pe_ratio": info.get("trailingPE","N/A"),
+            "debt": info.get("totalDebt",0),
         }
 
     except Exception as e:
@@ -161,6 +161,11 @@ def get_ticker(company_name):
 
     except Exception:
         return company_name.upper()
+
+def format_billions(value):
+    if value is None or value == 0:
+        return "N/A"
+    return f"${value/1_000_000_000:,.2f}B"
 
 if st.button("Generate Memo"):
 
@@ -230,34 +235,19 @@ Do NOT add extra sections.
     col1, col2, col3 = st.columns(3)
 
     col1.metric("Company", display_name)
-    
-    market_cap = financials.get("marketCap")
+    col2.metric("Market Cap", format_billions(financials.get("marketCap")))
+    col3.metric("Price", f"${financials.get('lastPrice', 0):,.2f}" if financials.get("lastPrice") else "N/A")
 
-    if market_cap:
-        market_cap_m = market_cap / 1_000_000
-        market_cap_display = f"${market_cap_m:,.2f}M"
-    else:
-        market_cap_display = "N/A"
+    col4, col5, col6 = st.columns(3)
 
-    col2.metric("Market Cap", market_cap_display)    
-    price = financials.get("lastPrice")
+    col4.metric("Revenue", format_billions(financials.get("revenue")))
+    col5.metric("Net Income", format_billions(financials.get("netIncome")))
+    col6.metric("Debt", format_billions(financials.get("debt")))
 
-    if price:
-        price_display = f"${price:,.2f}"
-    else:
-        price_display = "N/A"
+    st.caption(f"Sector: {financials.get('sector', 'N/A')}")
 
-    price = financials.get("lastPrice")
-
-    if price:
-        price_display = f"${price:,.2f}"
-    else:
-        price_display = "N/A"
-
-    col3.metric("Price", price_display)
     st.download_button(
-        label="Download Memo",
-        data=memo,
-        file_name=f"{company_name}_investment_memo.md",
-        mime="text/markdown"
+        "Download Memo",
+        memo,
+        file_name=f"{company_name}_memo.md"
     )
