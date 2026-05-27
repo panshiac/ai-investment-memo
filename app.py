@@ -135,9 +135,13 @@ def get_financial_data(company):
         info = stock.fast_info
 
         return {
-            "name": None,
-            "marketCap": info.get("market_cap"),
-            "lastPrice": info.get("last_price"),
+            "marketCap": info.get("marketCap"),
+            "lastPrice": info.get("regularMarketPrice"),
+            "sector": info.get("sector"),
+            "revenue": info.get("totalRevenue"),
+            "netIncome": info.get("netIncomeToCommon"),
+            "pe_ratio": info.get("trailingPE"),
+            "debt": info.get("totalDebt"),
         }
 
     except Exception as e:
