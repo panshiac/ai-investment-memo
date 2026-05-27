@@ -184,9 +184,9 @@ Name: {financials['name']}
 Sector: {financials.get('sector', 'N/A')}
 Market Cap: {financials.get('marketCap', 'N/A')}
 Revenue: {financials.get('revenue', 'N/A')}
-Net Income: {financials['netIncome']}
-P/E Ratio: {financials['pe_ratio']}
-Debt: {financials['debt']}
+Net Income: {financials.get('netIncome', 'N/A')}
+P/E Ratio: {financials.get('pe_ratio', 'N/A')}
+Debt: {financials.get('debt', 'N/A')}
 
 Do NOT use HTML.
 Do NOT add extra sections.
