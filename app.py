@@ -31,8 +31,9 @@ p, div, span {
     color: #e5e7eb !important;
 }
 
-* {
-    font-family: "Arial", sans-serif !important;
+.stMarkdown, .stMarkdown p {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+    line-height: 1.6 !important;
 }
 
 /* captions */
@@ -275,7 +276,18 @@ Do NOT add extra sections.
 
     st.subheader("📄 Investment Memo")
 
-    st.markdown(memo)
+    st.markdown(
+        f"""
+        <div style="
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            font-size: 15px;
+        ">
+        {memo}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.subheader("📈 Stock Price (1Y)")
 
