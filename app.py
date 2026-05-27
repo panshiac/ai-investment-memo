@@ -205,9 +205,13 @@ Do NOT add extra sections.
 
     st.markdown(memo)
 
-    st.subheader("📊 Financial Data (Yahoo Finance)")
+    st.subheader("📊 Financial Overview")
 
-    st.json(financials)
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("Company", financials.get("name", "N/A"))
+    col2.metric("Market Cap", financials.get("marketCap", "N/A"))
+    col3.metric("Price", financials.get("lastPrice", "N/A"))
 
     st.download_button(
         label="Download Memo",
