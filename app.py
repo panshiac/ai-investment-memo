@@ -138,7 +138,7 @@ def get_financial_data(company):
         return {
             "marketCap": info.get("marketCap",0),
             "lastPrice": info.get("regularMarketPrice",0),
-            "sector": info.get("sector",0),
+            "sector": info.get("sector","N/A"),
             "revenue": info.get("totalRevenue",0),
             "netIncome": info.get("netIncomeToCommon",0),
             "pe_ratio": info.get("trailingPE","N/A"),
@@ -166,7 +166,7 @@ def get_ticker(company_name):
 def format_billions(value):
     if value is None or value == 0:
         return "N/A"
-    return f"${value/1_000_000_000:,.2f}B"
+    return f"${value/1_000_000_000:.2f}B"
 
 def get_stock_chart(ticker):
     stock = yf.Ticker(ticker)
@@ -207,26 +207,25 @@ Use EXACTLY these sections:
 Memo style: {memo_style}
 Company: {company_name}
 
-PDF TEXT:
-{document_text[:8000]}
-
 FINANCIAL DATA (USE THIS FOR ANALYSIS):
 
 Company: {company_name}
 Sector: {financials.get('sector', 'N/A')}
-
 Market Cap: {financials.get('marketCap', 'N/A')}
 Revenue: {financials.get('revenue', 'N/A')}
 Net Income: {financials.get('netIncome', 'N/A')}
-Debt: {financials.get('debt', 'N/A')}
 P/E Ratio: {financials.get('pe_ratio', 'N/A')}
+Debt: {financials.get('debt', 'N/A')}
 
 INSTRUCTIONS:
-- Use these metrics directly in your reasoning
-- Comment on valuation (cheap / fair / expensive)
-- Mention revenue scale and profitability
-- Highlight debt risk if high
+- Use these metrics directly in analysis
+- Explain valuation (cheap/fair/expensive)
+- Mention profitability and debt risk
+- Be specific with numbers
 - Compare metrics to overall investment recommendation
+
+PDF TEXT:
+{document_text[:8000]}
 
 Do NOT use HTML.
 Do NOT add extra sections.
