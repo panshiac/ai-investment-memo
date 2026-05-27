@@ -69,6 +69,20 @@ p, div, span {
     background-color: #0ea5e9;
 }
 
+code {
+    background-color: transparent !important;
+    color: #e5e7eb !important;
+}
+
+mark {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+strong {
+    color: #f8fafc !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -166,7 +180,7 @@ def get_ticker(company_name):
 def format_billions(value):
     if value is None or value == 0:
         return "N/A"
-    return f"${value/1_000_000_000:.2f}B"
+    return f"${value/1_000_000_000:,.2f}B"
 
 def get_stock_chart(ticker):
     stock = yf.Ticker(ticker)
@@ -212,18 +226,20 @@ FINANCIAL DATA (USE THIS FOR ANALYSIS):
 Company: {company_name}
 Sector: {financials.get('sector', 'N/A')}
 
-Market Cap: {format_billions(financials.get('marketCap'))} USD
-Revenue: {format_billions(financials.get('revenue'))} USD
-Net Income: {format_billions(financials.get('netIncome'))} USD
-Debt: {format_billions(financials.get('debt'))} USD
-P/E Ratio: {financials.get('pe_ratio', 'N/A')} USD
+Market Cap: {format_billions(financials.get('marketCap'))}
+Revenue: {format_billions(financials.get('revenue'))}
+Net Income: {format_billions(financials.get('netIncome'))}
+Debt: {format_billions(financials.get('debt'))}
+P/E Ratio: {financials.get('pe_ratio', 'N/A')}
 
 INSTRUCTIONS:
-- Use these metrics directly in analysis
-- Explain valuation (cheap/fair/expensive)
-- Mention profitability and debt risk
-- Be specific with numbers
-- Compare metrics to overall investment recommendation
+- Use ONLY the provided financial values exactly as written
+- Do NOT convert units (do not change B into billion or trillion)
+- Always keep numbers exactly in the format provided (e.g. $97.88B)
+- Be consistent in how numbers appear across the entire memo
+- Explain valuation clearly (cheap / fair / expensive)
+- Mention profitability and debt risk using the provided values
+- Do not reformat or restyle numbers in sentences
 
 FORMATTING RULES (CRITICAL):
 - Do NOT use brackets [ ] around any numbers
