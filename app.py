@@ -230,9 +230,31 @@ Do NOT add extra sections.
     col1, col2, col3 = st.columns(3)
 
     col1.metric("Company", display_name)
-    col2.metric("Market Cap", financials.get("marketCap", "N/A"))
-    col3.metric("Price", financials.get("lastPrice", "N/A"))
+    
+    market_cap = financials.get("marketCap")
 
+    if market_cap:
+        market_cap_m = market_cap / 1_000_000
+        market_cap_display = f"${market_cap_m:,.2f}M"
+    else:
+        market_cap_display = "N/A"
+
+    col2.metric("Market Cap", market_cap_display)    
+    price = financials.get("lastPrice")
+
+    if price:
+        price_display = f"${price:,.2f}"
+    else:
+        price_display = "N/A"
+
+    price = financials.get("lastPrice")
+
+    if price:
+        price_display = f"${price:,.2f}"
+    else:
+        price_display = "N/A"
+
+    col3.metric("Price", price_display)
     st.download_button(
         label="Download Memo",
         data=memo,
