@@ -31,6 +31,10 @@ p, div, span {
     color: #e5e7eb !important;
 }
 
+* {
+    font-family: "Arial", sans-serif !important;
+}
+
 /* captions */
 .stCaption {
     color: #9ca3af !important;
@@ -230,7 +234,7 @@ Market Cap: {format_billions(financials.get('marketCap'))}
 Revenue: {format_billions(financials.get('revenue'))}
 Net Income: {format_billions(financials.get('netIncome'))}
 Debt: {format_billions(financials.get('debt'))}
-P/E Ratio: {financials.get('pe_ratio', 'N/A')}
+P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
 
 INSTRUCTIONS:
 - Use ONLY the provided financial values exactly as written
@@ -240,6 +244,7 @@ INSTRUCTIONS:
 - Explain valuation clearly (cheap / fair / expensive)
 - Mention profitability and debt risk using the provided values
 - Do not reformat or restyle numbers in sentences
+- Always include "$" when referring to financial values. Never write numbers without currency symbols when describing Market Cap, Revenue, Net Income, Debt, or Price.
 
 FORMATTING RULES (CRITICAL):
 - Do NOT use brackets [ ] around any numbers
