@@ -200,7 +200,7 @@ PDF TEXT:
 {document_text[:8000]}
 
 FINANCIAL DATA:
-Name: {financials['name']}
+Name: {company_name}
 Sector: {financials.get('sector', 'N/A')}
 Market Cap: {financials.get('marketCap', 'N/A')}
 Revenue: {financials.get('revenue', 'N/A')}
