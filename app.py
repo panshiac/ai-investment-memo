@@ -135,7 +135,7 @@ def get_financial_data(company):
         info = stock.fast_info
 
         return {
-            "name": company,
+            "name": None,
             "marketCap": info.get("market_cap"),
             "lastPrice": info.get("last_price"),
         }
@@ -162,6 +162,8 @@ if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
     financials = get_financial_data(ticker)
+
+    display_name = company_name
 
     document_text = ""
 
@@ -223,7 +225,7 @@ Do NOT add extra sections.
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Company", financials.get("name", "N/A"))
+    col1.metric("Company", display_name)
     col2.metric("Market Cap", financials.get("marketCap", "N/A"))
     col3.metric("Price", financials.get("lastPrice", "N/A"))
 
