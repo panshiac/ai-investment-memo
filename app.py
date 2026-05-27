@@ -192,7 +192,7 @@ if st.button("Generate Memo"):
     ticker = get_ticker(company_name)
     financials = get_financial_data(ticker)
 
-    display_name = company_name
+    display_name = company_name.title()
 
     document_text = ""
 
@@ -233,41 +233,12 @@ Debt: {format_billions(financials.get('debt'))}
 P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
 
 INSTRUCTIONS:
-- You MUST ONLY use the provided financial values EXACTLY as written
-- NEVER write numbers without the "$" symbol
-- NEVER remove "$" from any financial value
-- NEVER write numbers like "97.88B" or "3.86B" without "$"
-- NEVER convert or reformat numbers in any way
-- If a number is not already in "$X.XXB" format, treat it as invalid
-- Do NOT restyle or rewrite financial values in sentences
-- Keep formatting identical across all sections
-
-Treat ALL numbers in input as final display values. Do not modify them in any way.
-
-FORMATTING RULES (CRITICAL):
-- Do NOT use brackets [ ] around any numbers
-- Do NOT bold numbers or financial metrics
-- Do NOT add extra symbols or decorations in sentences
-- Write all text in clean plain markdown paragraphs
-- Always include $ for financial values (do not remove it)
-- Keep sentences clean and professional like a financial report
-
-IMPORTANT RULE:
-NEVER convert or reinterpret numeric units. All financial values are already pre-formatted. Do not rewrite "B" as "billion" or "trillion".
-
-FINAL OUTPUT RULES:
-- Write in strict financial report format
-- Do not vary number formatting under any circumstances
-- Always use "$" for monetary values
-- Always keep numbers exactly as provided (no reformatting)
-- Do not add extra commentary outside sections
-- Keep tone institutional and consistent (no casual language)
-
-OUTPUT STYLE RULES:
-- Always use bullet points for RISKS and SWOT
-- Never mix paragraphs and bullet points in the same section
-- Keep EXECUTIVE SUMMARY as a single paragraph only
-- Keep formatting identical across all sections
+- Use ONLY the provided financial data
+- Do NOT change number formats
+- Do NOT convert units
+- Use markdown format with clear sections
+- RISKS and SWOT must be bullet points
+- EXECUTIVE SUMMARY must be one paragraph
 
 PDF TEXT:
 {document_text[:8000]}
