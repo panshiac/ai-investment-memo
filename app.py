@@ -5,6 +5,7 @@ from openai import OpenAI
 from pypdf import PdfReader
 import yfinance as yf
 from yahooquery import search
+import pandas as pd
 
 load_dotenv()
 
@@ -167,6 +168,11 @@ def format_billions(value):
         return "N/A"
     return f"${value/1_000_000_000:,.2f}B"
 
+def get_stock_chart(ticker):
+    stock = yf.Ticker(ticker)
+    hist = stock.history(period="1y")
+    return hist
+
 if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
@@ -229,6 +235,12 @@ Do NOT add extra sections.
     st.subheader("📄 Investment Memo")
 
     st.markdown(memo)
+
+    st.subheader("📈 Stock Price (1Y)")
+
+    chart_data = get_stock_chart(ticker)
+
+    st.line_chart(chart_data["Close"])
 
     st.subheader("📊 Financial Overview")
 
