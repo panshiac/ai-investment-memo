@@ -233,14 +233,13 @@ Debt: {format_billions(financials.get('debt'))}
 P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
 
 INSTRUCTIONS:
-- Use ONLY the provided financial values exactly as written
-- Do NOT convert units (do not change B into billion or trillion)
-- Always keep numbers exactly in the format provided (e.g. $97.88B)
-- Be consistent in how numbers appear across the entire memo
-- Explain valuation clearly (cheap / fair / expensive)
-- Mention profitability and debt risk using the provided values
-- Do not reformat or restyle numbers in sentences
-- Always include "$" when referring to financial values. Never write numbers without currency symbols when describing Market Cap, Revenue, Net Income, Debt, or Price.
+- You MUST ALWAYS keep the "$" symbol when referring to financial values
+- NEVER output numbers without "$"
+- NEVER write "billion" or "trillion"
+- Use ONLY the format provided in the financial data (example: $97.88B)
+- Do NOT reformat, rewrite, or reinterpret numbers in any way
+- Every financial number in the memo must include "$"
+- Be consistent across all sections (EXECUTIVE SUMMARY, RISKS, SWOT, RECOMMENDATION)
 
 FORMATTING RULES (CRITICAL):
 - Do NOT use brackets [ ] around any numbers
@@ -279,7 +278,10 @@ Do NOT add extra sections.
 
     st.subheader("📄 Investment Memo")
 
-    st.markdown(memo)
+    st.markdown(
+    memo,
+    help=None
+    )
 
     st.subheader("📈 Stock Price (1Y)")
 
