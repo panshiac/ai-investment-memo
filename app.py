@@ -143,6 +143,8 @@ def get_financial_data(company):
 
 if st.button("Generate Memo"):
 
+    financials = get_financial_data(company_name)
+
     document_text = ""
 
     if uploaded_file is not None:
@@ -172,6 +174,15 @@ Company: {company_name}
 
 PDF TEXT:
 {document_text[:8000]}
+
+FINANCIAL DATA:
+Name: {financials['name']}
+Sector: {financials['sector']}
+Market Cap: {financials['marketCap']}
+Revenue: {financials['revenue']}
+Net Income: {financials['netIncome']}
+P/E Ratio: {financials['pe_ratio']}
+Debt: {financials['debt']}
 
 Do NOT use HTML.
 Do NOT add extra sections.
