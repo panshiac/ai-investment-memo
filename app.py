@@ -4,6 +4,7 @@ import streamlit as st
 from openai import OpenAI
 from pypdf import PdfReader
 import yfinance as yf
+from yahooquery import search
 
 load_dotenv()
 
@@ -145,9 +146,22 @@ def get_financial_data(company):
             "details": str(e)
         }
 
+def get_ticker(company_name):
+    try:
+        results = search(company_name)
+
+        if "quotes" in results and len(results["quotes"]) > 0:
+            return results["quotes"][0]["symbol"]
+
+        return company_name.upper()
+
+    except Exception:
+        return company_name.upper()
+
 if st.button("Generate Memo"):
 
-    financials = get_financial_data(company_name)
+    ticker = get_ticker(company_name)
+    financials = get_financial_data(ticker)
 
     document_text = ""
 
