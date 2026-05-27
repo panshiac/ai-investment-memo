@@ -212,11 +212,11 @@ FINANCIAL DATA (USE THIS FOR ANALYSIS):
 Company: {company_name}
 Sector: {financials.get('sector', 'N/A')}
 
-Market Cap: {format_billions(financials.get('marketCap'))}
-Revenue: {format_billions(financials.get('revenue'))}
-Net Income: {format_billions(financials.get('netIncome'))}
-Debt: {format_billions(financials.get('debt'))}
-P/E Ratio: {financials.get('pe_ratio', 'N/A')}
+Market Cap: {format_billions(financials.get('marketCap'))} USD
+Revenue: {format_billions(financials.get('revenue'))} USD
+Net Income: {format_billions(financials.get('netIncome'))} USD
+Debt: {format_billions(financials.get('debt'))} USD
+P/E Ratio: {financials.get('pe_ratio', 'N/A')} USD
 
 INSTRUCTIONS:
 - Use these metrics directly in analysis
@@ -224,6 +224,14 @@ INSTRUCTIONS:
 - Mention profitability and debt risk
 - Be specific with numbers
 - Compare metrics to overall investment recommendation
+
+FORMATTING RULES (CRITICAL):
+- Do NOT use brackets [ ] around any numbers
+- Do NOT bold numbers or financial metrics
+- Do NOT add extra symbols or decorations in sentences
+- Write all text in clean plain markdown paragraphs
+- Always include $ for financial values (do not remove it)
+- Keep sentences clean and professional like a financial report
 
 IMPORTANT RULE:
 NEVER convert or reinterpret numeric units. All financial values are already pre-formatted. Do not rewrite "B" as "billion" or "trillion".
