@@ -211,11 +211,12 @@ FINANCIAL DATA (USE THIS FOR ANALYSIS):
 
 Company: {company_name}
 Sector: {financials.get('sector', 'N/A')}
-Market Cap: {financials.get('marketCap', 'N/A')}
-Revenue: {financials.get('revenue', 'N/A')}
-Net Income: {financials.get('netIncome', 'N/A')}
+
+Market Cap: {format_billions(financials.get('marketCap'))}
+Revenue: {format_billions(financials.get('revenue'))}
+Net Income: {format_billions(financials.get('netIncome'))}
+Debt: {format_billions(financials.get('debt'))}
 P/E Ratio: {financials.get('pe_ratio', 'N/A')}
-Debt: {financials.get('debt', 'N/A')}
 
 INSTRUCTIONS:
 - Use these metrics directly in analysis
@@ -223,6 +224,9 @@ INSTRUCTIONS:
 - Mention profitability and debt risk
 - Be specific with numbers
 - Compare metrics to overall investment recommendation
+
+IMPORTANT RULE:
+NEVER convert or reinterpret numeric units. All financial values are already pre-formatted. Do not rewrite "B" as "billion" or "trillion".
 
 PDF TEXT:
 {document_text[:8000]}
