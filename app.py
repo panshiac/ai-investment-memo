@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import streamlit as st
 from openai import OpenAI
 from pypdf import PdfReader
+import yfinance as yf
 
 load_dotenv()
 
@@ -125,6 +126,20 @@ def extract_pdf_text(file):
             text += page_text + "\n"
 
     return text
+
+def get_financial_data(company):
+    stock = yf.Ticker(company)
+    info = stock.info
+
+    return {
+        "name": info.get("shortName"),
+        "sector": info.get("sector"),
+        "marketCap": info.get("marketCap"),
+        "revenue": info.get("totalRevenue"),
+        "netIncome": info.get("netIncomeToCommon"),
+        "pe_ratio": info.get("trailingPE"),
+        "debt": info.get("totalDebt"),
+    }
 
 if st.button("Generate Memo"):
 
