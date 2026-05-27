@@ -205,6 +205,10 @@ Do NOT add extra sections.
 
     st.markdown(memo)
 
+    st.subheader("📊 Financial Data (Yahoo Finance)")
+
+    st.json(financials)
+
     st.download_button(
         label="Download Memo",
         data=memo,
