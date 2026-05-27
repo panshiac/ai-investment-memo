@@ -181,9 +181,9 @@ PDF TEXT:
 
 FINANCIAL DATA:
 Name: {financials['name']}
-Sector: {financials['sector']}
-Market Cap: {financials['marketCap']}
-Revenue: {financials['revenue']}
+Sector: {financials.get('sector', 'N/A')}
+Market Cap: {financials.get('marketCap', 'N/A')}
+Revenue: {financials.get('revenue', 'N/A')}
 Net Income: {financials['netIncome']}
 P/E Ratio: {financials['pe_ratio']}
 Debt: {financials['debt']}
