@@ -233,13 +233,16 @@ Debt: {format_billions(financials.get('debt'))}
 P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
 
 INSTRUCTIONS:
-- You MUST ALWAYS keep the "$" symbol when referring to financial values
-- NEVER output numbers without "$"
-- NEVER write "billion" or "trillion"
-- Use ONLY the format provided in the financial data (example: $97.88B)
-- Do NOT reformat, rewrite, or reinterpret numbers in any way
-- Every financial number in the memo must include "$"
-- Be consistent across all sections (EXECUTIVE SUMMARY, RISKS, SWOT, RECOMMENDATION)
+- You MUST ONLY use the provided financial values EXACTLY as written
+- NEVER write numbers without the "$" symbol
+- NEVER remove "$" from any financial value
+- NEVER write numbers like "97.88B" or "3.86B" without "$"
+- NEVER convert or reformat numbers in any way
+- If a number is not already in "$X.XXB" format, treat it as invalid
+- Do NOT restyle or rewrite financial values in sentences
+- Keep formatting identical across all sections
+
+Treat ALL numbers in input as final display values. Do not modify them in any way.
 
 FORMATTING RULES (CRITICAL):
 - Do NOT use brackets [ ] around any numbers
@@ -259,6 +262,12 @@ FINAL OUTPUT RULES:
 - Always keep numbers exactly as provided (no reformatting)
 - Do not add extra commentary outside sections
 - Keep tone institutional and consistent (no casual language)
+
+OUTPUT STYLE RULES:
+- Always use bullet points for RISKS and SWOT
+- Never mix paragraphs and bullet points in the same section
+- Keep EXECUTIVE SUMMARY as a single paragraph only
+- Keep formatting identical across all sections
 
 PDF TEXT:
 {document_text[:8000]}
