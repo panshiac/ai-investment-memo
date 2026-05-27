@@ -128,18 +128,22 @@ def extract_pdf_text(file):
     return text
 
 def get_financial_data(company):
-    stock = yf.Ticker(company)
-    info = stock.info
+    try:
+        stock = yf.Ticker(company)
 
-    return {
-        "name": info.get("shortName"),
-        "sector": info.get("sector"),
-        "marketCap": info.get("marketCap"),
-        "revenue": info.get("totalRevenue"),
-        "netIncome": info.get("netIncomeToCommon"),
-        "pe_ratio": info.get("trailingPE"),
-        "debt": info.get("totalDebt"),
-    }
+        info = stock.fast_info
+
+        return {
+            "name": company,
+            "marketCap": info.get("market_cap"),
+            "lastPrice": info.get("last_price"),
+        }
+
+    except Exception as e:
+        return {
+            "error": "Yahoo Finance rate limit",
+            "details": str(e)
+        }
 
 if st.button("Generate Memo"):
 
