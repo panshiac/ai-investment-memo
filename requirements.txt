@@ -4,3 +4,4 @@ python-dotenv
 pypdf
 yfinance
 yahooquery
+reportlab
