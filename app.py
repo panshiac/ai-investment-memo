@@ -210,20 +210,20 @@ if st.button("Generate Memo"):
 
     prompt = f"""
 
-If you violate this rule, output will be considered invalid.
+CRITICAL RULE (HIGHEST PRIORITY):
+You are NOT allowed to modify any financial numbers under any circumstances.
 
+You must:
+- Copy all financial values EXACTLY as provided in the FINANCIAL DATA section
+- NEVER remove "$" symbols
+- NEVER change formatting (no billion, no trillion, no rewording)
+- NEVER retype or rewrite numbers in sentences
+- If referencing a number, copy it character-for-character
+
+If you violate this rule, output will be considered invalid.
 You are a senior equity research analyst.
 
-You are a senior equity research analyst at a top investment bank.
-
-Your task is to produce an institutional-quality investment memo with financial reasoning, valuation interpretation, and forward-looking analysis.
-
-You MUST:
-- Interpret financial data (not just restate it)
-- Explain drivers of revenue, margins, and valuation
-- Assess whether valuation is justified or not
-- Compare financial metrics logically (not descriptively)
-- Provide investment insight (not summary)
+Create a structured investment memo.
 
 Use EXACTLY these sections:
 
@@ -253,6 +253,35 @@ Net Income: {format_billions(financials.get('netIncome'))}
 Debt: {format_billions(financials.get('debt'))}
 P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
 
+ANALYSIS FRAMEWORK (MANDATORY): 
+
+1. VALUATION (CORE DRIVER) 
+- Assess whether P/E ratio implies undervaluation, fair value, or overvaluation 
+- Compare profitability vs valuation 
+- Identify if market is pricing in growth or stagnation 
+
+2. UNIT ECONOMICS & PROFIT QUALITY 
+- Evaluate revenue vs net income efficiency 
+- Identify margin strength or weakness 
+- Comment on earnings durability 
+
+3. BALANCE SHEET STRENGTH 
+- Evaluate debt relative to revenue and earnings power 
+- Identify leverage risk (low / moderate / high) 
+
+4. GROWTH TRAJECTORY 
+- Classify company: Hypergrowth / Growth / Mature / Declining 
+- Explain drivers of future growth or slowdown 
+
+5. MARKET EXPECTATIONS GAP 
+- Identify difference between market pricing and fundamentals 
+- Explain if sentiment is too optimistic or pessimistic 
+
+6. INVESTMENT DECISION LOGIC 
+- Your recommendation MUST be derived from valuation + growth + risk 
+- Do NOT guess BUY/HOLD/SELL 
+— justify it from analysis ? if yes why do i not in the website
+
 INSTRUCTIONS:
 - Use ONLY the provided financial data
 - Do NOT change number formats
@@ -260,26 +289,6 @@ INSTRUCTIONS:
 - Use markdown format with clear sections
 - RISKS and SWOT must be bullet points
 - EXECUTIVE SUMMARY must be one paragraph
-
-ANALYSIS FRAMEWORK (MANDATORY):
-
-1. VALUATION ANALYSIS
-- Assess if P/E ratio is high, fair, or low relative to growth
-- Explain why valuation is justified or not
-
-2. PROFITABILITY QUALITY
-- Evaluate net margin strength using net income vs revenue
-- Comment on earnings sustainability
-
-3. BALANCE SHEET RISK
-- Interpret debt level relative to revenue and size
-- Assess financial risk from leverage
-
-4. GROWTH OUTLOOK
-- Identify whether company is in growth, maturity, or slowdown phase
-
-5. INVESTMENT VIEW
-- Clearly justify Buy / Hold / Sell based on above
 
 PDF TEXT:
 {document_text[:8000]}
