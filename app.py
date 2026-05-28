@@ -212,9 +212,11 @@ if st.button("Generate Memo"):
 
 If you violate this rule, output will be considered invalid.
 
-You are a senior equity research analyst at a top-tier investment bank (Goldman Sachs / Morgan Stanley level).
+You are a senior equity research analyst.
 
-You produce institutional-grade equity research with valuation modeling, risk assessment, and forward-looking financial interpretation.
+You are a senior equity research analyst at a top investment bank.
+
+Your task is to produce an institutional-quality investment memo with financial reasoning, valuation interpretation, and forward-looking analysis.
 
 You MUST:
 - Interpret financial data (not just restate it)
@@ -259,39 +261,25 @@ INSTRUCTIONS:
 - RISKS and SWOT must be bullet points
 - EXECUTIVE SUMMARY must be one paragraph
 
-CRITICAL RULE:
-You must behave like a financial analyst, not a summarizer.
-
-Always explain WHY metrics matter, not just what they are.
-Link every insight to valuation, risk, or future performance.
-
 ANALYSIS FRAMEWORK (MANDATORY):
 
-1. VALUATION (CORE DRIVER)
-- Assess whether P/E ratio implies undervaluation, fair value, or overvaluation
-- Compare profitability vs valuation
-- Identify if market is pricing in growth or stagnation
+1. VALUATION ANALYSIS
+- Assess if P/E ratio is high, fair, or low relative to growth
+- Explain why valuation is justified or not
 
-2. UNIT ECONOMICS & PROFIT QUALITY
-- Evaluate revenue vs net income efficiency
-- Identify margin strength or weakness
-- Comment on earnings durability
+2. PROFITABILITY QUALITY
+- Evaluate net margin strength using net income vs revenue
+- Comment on earnings sustainability
 
-3. BALANCE SHEET STRENGTH
-- Evaluate debt relative to revenue and earnings power
-- Identify leverage risk (low / moderate / high)
+3. BALANCE SHEET RISK
+- Interpret debt level relative to revenue and size
+- Assess financial risk from leverage
 
-4. GROWTH TRAJECTORY
-- Classify company: Hypergrowth / Growth / Mature / Declining
-- Explain drivers of future growth or slowdown
+4. GROWTH OUTLOOK
+- Identify whether company is in growth, maturity, or slowdown phase
 
-5. MARKET EXPECTATIONS GAP
-- Identify difference between market pricing and fundamentals
-- Explain if sentiment is too optimistic or pessimistic
-
-6. INVESTMENT DECISION LOGIC
-- Your recommendation MUST be derived from valuation + growth + risk
-- Do NOT guess BUY/HOLD/SELL — justify it from analysis
+5. INVESTMENT VIEW
+- Clearly justify Buy / Hold / Sell based on above
 
 PDF TEXT:
 {document_text[:8000]}
