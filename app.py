@@ -209,6 +209,7 @@ if st.button("Generate Memo"):
         document_text = extract_pdf_text(uploaded_file)
 
     prompt = f"""
+
 CRITICAL RULE (HIGHEST PRIORITY):
 You are NOT allowed to modify any financial numbers under any circumstances.
 
