@@ -210,6 +210,8 @@ if st.button("Generate Memo"):
 
     prompt = f"""
 
+If you violate this rule, output will be considered invalid.
+
 You are a senior equity research analyst.
 
 Create a structured investment memo.
@@ -242,27 +244,13 @@ Net Income: {format_billions(financials.get('netIncome'))}
 Debt: {format_billions(financials.get('debt'))}
 P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
 
-INSTRUCTIONS (CRITICAL):
-
-EXECUTIVE SUMMARY RULES:
-- Do NOT write raw numbers in your own words
-- ONLY copy financial values EXACTLY from FINANCIAL DATA section
-- Do NOT reformat, rewrite, or simplify any number
-- If you mention a number, copy it exactly as written (including $ and decimals)
-- NEVER write numbers like "97.88B" or "3.86B" unless copied exactly
-
-ABSOLUTE RULE:
-Treat all values in FINANCIAL DATA as immutable tokens.
-
-You are not allowed to:
-- reformat them
-- rewrite them
-- remove symbols like $
-- split numbers
-- or change spacing
-
-You must copy them character-for-character.
-If you cannot copy exactly, do not include the number at all.
+INSTRUCTIONS:
+- Use ONLY the provided financial data
+- Do NOT change number formats
+- Do NOT convert units
+- Use markdown format with clear sections
+- RISKS and SWOT must be bullet points
+- EXECUTIVE SUMMARY must be one paragraph
 
 PDF TEXT:
 {document_text[:8000]}
