@@ -230,30 +230,7 @@ Use EXACTLY these sections:
 ## EXECUTIVE SUMMARY
 (one paragraph)
 
-## RISKS
-(bullet points)
-
-## SWOT
-(bullet points)
-
-## RECOMMENDATION
-(Buy/Hold/Sell + confidence score)
-
-Memo style: {memo_style}
-Company: {company_name}
-
-FINANCIAL DATA (USE THIS FOR ANALYSIS):
-
-Company: {company_name}
-Sector: {financials.get('sector', 'N/A')}
-
-Market Cap: {format_billions(financials.get('marketCap'))}
-Revenue: {format_billions(financials.get('revenue'))}
-Net Income: {format_billions(financials.get('netIncome'))}
-Debt: {format_billions(financials.get('debt'))}
-P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
-
-ANALYSIS FRAMEWORK (MANDATORY): 
+## ANALYSIS FRAMEWORK
 
 1. VALUATION (CORE DRIVER) 
 - Assess whether P/E ratio implies undervaluation, fair value, or overvaluation 
@@ -281,6 +258,30 @@ ANALYSIS FRAMEWORK (MANDATORY):
 - Your recommendation MUST be derived from valuation + growth + risk 
 - Do NOT guess BUY/HOLD/SELL 
 — justify it from analysis ? if yes why do i not in the website
+
+## RISKS
+(bullet points)
+
+## SWOT
+(bullet points)
+
+## RECOMMENDATION
+(Buy/Hold/Sell + confidence score)
+
+Memo style: {memo_style}
+Company: {company_name}
+
+FINANCIAL DATA (USE THIS FOR ANALYSIS):
+
+Company: {company_name}
+Sector: {financials.get('sector', 'N/A')}
+
+Market Cap: {format_billions(financials.get('marketCap'))}
+Revenue: {format_billions(financials.get('revenue'))}
+Net Income: {format_billions(financials.get('netIncome'))}
+Debt: {format_billions(financials.get('debt'))}
+P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
+
 
 INSTRUCTIONS:
 - Use ONLY the provided financial data
