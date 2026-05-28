@@ -210,16 +210,6 @@ if st.button("Generate Memo"):
 
     prompt = f"""
 
-CRITICAL RULE (HIGHEST PRIORITY):
-You are NOT allowed to modify any financial numbers under any circumstances.
-
-You must:
-- Copy all financial values EXACTLY as provided in the FINANCIAL DATA section
-- NEVER remove "$" symbols
-- NEVER change formatting (no billion, no trillion, no rewording)
-- NEVER retype or rewrite numbers in sentences
-- If referencing a number, copy it character-for-character
-
 If you violate this rule, output will be considered invalid.
 
 You are a senior equity research analyst.
