@@ -227,20 +227,17 @@ You MUST:
 
 Use EXACTLY these sections:
 
-## EXECUTIVE SUMMARY (INVESTMENT VIEW)
-(one paragraph with clear investment thesis)
+## EXECUTIVE SUMMARY
+(one paragraph)
 
-## VALUATION ANALYSIS
-(interpret P/E, pricing, whether stock is undervalued, fairly valued, or overvalued)
+## RISKS
+(bullet points)
 
-## KEY RISKS
-(bullet points focusing on financial, operational, and market risks)
+## SWOT
+(bullet points)
 
-## SWOT ANALYSIS
-(bullet points: Strengths, Weaknesses, Opportunities, Threats)
-
-## FINAL RECOMMENDATION (WITH LOGIC)
-(Buy / Hold / Sell + confidence score + 2–3 sentence justification based on valuation, growth, and risk)
+## RECOMMENDATION
+(Buy/Hold/Sell + confidence score)
 
 Memo style: {memo_style}
 Company: {company_name}
