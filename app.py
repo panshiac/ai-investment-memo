@@ -6,6 +6,8 @@ from pypdf import PdfReader
 import yfinance as yf
 from yahooquery import search
 import pandas as pd
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
 load_dotenv()
 
@@ -38,6 +40,32 @@ h1, h2, h3, h4 {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     line-height: 1.6 !important;
     font-variant-numeric: tabular-nums !important;
+}
+
+.stFileUploader > div {
+    background-color: #38bdf8;
+    border-radius: 10px;
+    padding: 10px;
+    color: white !important;
+}
+
+.stFileUploader label {
+    color: white !important;
+    font-weight: 600;
+}
+
+.stDownloadButton > button {
+    background-color: #38bdf8 !important;
+    color: white !important;
+    border-radius: 10px !important;
+    height: 3em !important;
+    width: 100% !important;
+    font-size: 18px !important;
+    border: none !important;
+}
+
+.stDownloadButton > button:hover {
+    background-color: #0ea5e9 !important;
 }
 
 /* captions */
@@ -195,6 +223,20 @@ def get_stock_chart(ticker):
     stock = yf.Ticker(ticker)
     hist = stock.history(period="1y")
     return hist
+def create_pdf(text, filename):
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet
+
+    doc = SimpleDocTemplate(filename)
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    for line in text.split("\n"):
+        content.append(Paragraph(line, styles["Normal"]))
+        content.append(Spacer(1, 6))
+
+    doc.build(content)
 
 if st.button("Generate Memo"):
 
@@ -326,8 +368,13 @@ Do NOT add extra sections.
 
     st.caption(f"Sector: {financials.get('sector', 'N/A')}")
 
-    st.download_button(
-        "Download Memo",
-        memo,
-        file_name=f"{company_name}_memo.md"
-    )
+    pdf_file = f"{company_name}_memo.pdf"
+    create_pdf(memo, pdf_file)
+
+    with open(pdf_file, "rb") as f:
+        st.download_button(
+            label="Download PDF Report",
+            data=f,
+            file_name=pdf_file,
+            mime="application/pdf"
+        )
