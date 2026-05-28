@@ -260,7 +260,6 @@ INSTRUCTIONS:
 - Use markdown format with clear sections
 - RISKS and SWOT must be bullet points
 - EXECUTIVE SUMMARY must be one paragraph
-- Do NOT describe numbers. Always interpret what they mean for valuation, risk, and future performance.
 
 ANALYSIS FRAMEWORK (MANDATORY):
 
