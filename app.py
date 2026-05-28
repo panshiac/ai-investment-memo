@@ -31,10 +31,13 @@ h1, h2, h3, h4 {
 .stMarkdown li,
 .stMarkdown strong,
 .stMarkdown span,
+.stMarkdown p,
+.stMarkdown li,
+.stMarkdown span,
 .stMarkdown code {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
-    color: #e5e7eb !important;
     line-height: 1.6 !important;
+    font-variant-numeric: tabular-nums !important;
 }
 
 /* captions */
@@ -186,7 +189,7 @@ def get_ticker(company_name):
 def format_billions(value):
     if value is None or value == 0:
         return "N/A"
-    return f"${value/1_000_000_000:,.2f}B"
+    return f"${value/1_000_000_000:.2f}B"
 
 def get_stock_chart(ticker):
     stock = yf.Ticker(ticker)
