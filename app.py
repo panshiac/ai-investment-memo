@@ -26,8 +26,14 @@ h1, h2, h3, h4 {
     color: #f8fafc !important;
 }
 
-.stMarkdown, .stMarkdown p {
+.stMarkdown,
+.stMarkdown p,
+.stMarkdown li,
+.stMarkdown strong,
+.stMarkdown span,
+.stMarkdown code {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+    color: #e5e7eb !important;
     line-height: 1.6 !important;
 }
 
