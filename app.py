@@ -335,10 +335,10 @@ if st.button("Generate Memo"):
 
     st.subheader("📄 Investment Memo")
 
-st.markdown(
-memo,
-help=None
-)
+    st.markdown(
+    memo,
+    help=None
+    )
 
     st.subheader("📈 Stock Price (1Y)")
 
