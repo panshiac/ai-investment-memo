@@ -11,7 +11,11 @@ load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-st.set_page_config(page_title="AI Investment Memo Generator", layout="wide")
+st.set_page_config(
+    page_title="MemoGen",
+    page_icon="logo.png",
+    layout="wide"
+)
 
 st.markdown("""
 <style>
@@ -95,22 +99,37 @@ strong {
 </style>
 """, unsafe_allow_html=True)
 
+col_logo_left, col_logo_center, col_logo_right = st.columns([1, 2, 1])
+
+with col_logo_center:
+    st.image("logo.png", width=260)
+
 st.markdown("""
 <div style="
     text-align:center;
-    padding: 20px;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #0f172a, #1e293b);
+    padding: 5px 20px 20px 20px;
     margin-bottom: 20px;
 ">
-    <h1 style="color:#38bdf8; margin-bottom:5px;">📈 AI Investment Memo Generator</h1>
-    <p style="color:#cbd5e1; font-size:16px;">
-        Generate institutional-grade investment memos from company data or PDFs
+    <h1 style="
+        color:#f8fafc;
+        margin-bottom:5px;
+        font-size:46px;
+        font-weight:700;
+    ">
+        MemoGen
+    </h1>
+
+    <p style="
+        color:#94a3b8;
+        font-size:18px;
+        margin-top:0;
+    ">
+        Institutional-Grade Equity Research Powered by AI
     </p>
 </div>
 """, unsafe_allow_html=True)
 
-st.caption("Generate structured investment memos from company names or uploaded PDF reports.")
+st.caption("Generate professional investment memos from company data, market metrics, and uploaded reports.")
 
 st.info("For educational and informational purposes only. This is not financial advice.")
 
