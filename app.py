@@ -322,6 +322,9 @@ if st.button("Generate Memo"):
     - Use markdown only.
     - Do not use HTML.
     - Do not add extra sections.
+    - Do NOT use italics.
+    - Do NOT use asterisks.
+    - Use normal paragraphs with spaces between words.
     """
 
     with st.spinner("Generating memo..."):
@@ -334,6 +337,10 @@ if st.button("Generate Memo"):
         memo = response.output_text
 
     st.subheader("📄 Investment Memo")
+
+    memo = memo.replace("***", "")
+    memo = memo.replace("**", "")
+    memo = memo.replace("*", "")
 
     st.markdown(
     memo,
