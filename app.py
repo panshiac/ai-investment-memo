@@ -21,85 +21,90 @@ st.markdown("""
 <style>
 
 .stApp {
-    background: radial-gradient(circle at top, #111827 0%, #050b18 55%, #020617 100%);
+    background: linear-gradient(to bottom right, #0b1220, #111827);
     color: #f8fafc;
 }
 
-.block-container {
-    padding-top: 2rem;
-    max-width: 1400px;
-}
-
-/* Text */
-h1, h2, h3, h4, p, li, label {
+/* MAIN TEXT */
+h1, h2, h3, h4 {
     color: #f8fafc !important;
 }
 
-.stMarkdown, .stMarkdown p, .stMarkdown li {
+.stMarkdown,
+.stMarkdown p,
+.stMarkdown li,
+.stMarkdown strong,
+.stMarkdown span,
+.stMarkdown p,
+.stMarkdown li,
+.stMarkdown span,
+.stMarkdown code {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
-    line-height: 1.7 !important;
+    line-height: 1.6 !important;
+    font-variant-numeric: tabular-nums !important;
 }
 
-/* Caption */
+/* captions */
 .stCaption {
-    color: #cbd5e1 !important;
-    text-align: center;
-    font-size: 16px !important;
+    color: #9ca3af !important;
 }
 
-/* Info box */
-.stAlert {
-    background-color: #13294b !important;
-    color: #e5e7eb !important;
-    border: 1px solid #1d4ed8 !important;
-    border-radius: 10px !important;
-}
-
-/* Inputs */
+/* input text */
 .stTextInput input {
-    background-color: #ffffff !important;
-    color: #111827 !important;
-    border-radius: 10px !important;
-    height: 3.2em;
+    color: black !important;
+    background-color: white !important;
     font-size: 16px;
 }
 
+/* select box */
 .stSelectbox div {
-    color: #111827 !important;
+    color: black !important;
 }
 
-/* File uploader */
-.stFileUploader section {
-    background-color: rgba(15, 23, 42, 0.85) !important;
-    border: 1px dashed #475569 !important;
-    border-radius: 12px !important;
-    padding: 18px !important;
+/* info box */
+.stAlert {
+    background-color: #1f2937 !important;
+    color: #f8fafc !important;
 }
 
-/* Button */
+/* button */
 .stButton>button {
-    background: linear-gradient(90deg, #2563eb, #38bdf8);
-    color: white !important;
+    background-color: #38bdf8;
+    color: white;
     border-radius: 10px;
-    height: 3.4em;
-    width: 190px;
-    font-size: 16px;
-    font-weight: 700;
+    height: 3em;
+    width: 100%;
+    font-size: 18px;
     border: none;
 }
 
 .stButton>button:hover {
-    background: linear-gradient(90deg, #1d4ed8, #0ea5e9);
+    background-color: #0ea5e9;
 }
 
-hr {
-    border: none;
-    border-top: 1px solid #1f2937;
-    margin: 30px 0;
+code {
+    background-color: transparent !important;
+    color: #e5e7eb !important;
+}
+
+mark {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+strong {
+    color: #f8fafc !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <div style='text-align:center;'>
+    """,
+    unsafe_allow_html=True
+)
 
 st.image("logo.png", width=350)
 
