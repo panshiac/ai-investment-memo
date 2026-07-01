@@ -213,119 +213,119 @@ if st.button("Generate Memo"):
     if uploaded_file is not None:
         document_text = extract_pdf_text(uploaded_file)
 
-prompt = f"""
-You are a senior buy-side equity analyst writing for a portfolio manager.
+    prompt = f"""
+    You are a senior buy-side equity analyst writing for a portfolio manager.
+    
+    Your job is NOT to describe the company generically.
+    Your job is to determine whether the financial data supports an attractive investment case.
 
-Your job is NOT to describe the company generically.
-Your job is to determine whether the financial data supports an attractive investment case.
+    CRITICAL RULES:
+    - Use ONLY the financial data and PDF text provided.
+    - Do NOT invent numbers, growth rates, margins, competitors, or forecasts.
+    - If information is missing, say what cannot be concluded.
+    - Every section must contain analytical judgment, not description.
+    - Avoid generic phrases such as "strong brand", "competitive industry", or "future growth potential" unless supported by data.
+    - Focus on valuation, earnings quality, balance sheet risk, expectations, and downside risk.
 
-CRITICAL RULES:
-- Use ONLY the financial data and PDF text provided.
-- Do NOT invent numbers, growth rates, margins, competitors, or forecasts.
-- If information is missing, say what cannot be concluded.
-- Every section must contain analytical judgment, not description.
-- Avoid generic phrases such as "strong brand", "competitive industry", or "future growth potential" unless supported by data.
-- Focus on valuation, earnings quality, balance sheet risk, expectations, and downside risk.
+    Use EXACTLY these sections:
 
-Use EXACTLY these sections:
+    ## EXECUTIVE SUMMARY
+    Write one institutional-style paragraph explaining the investment case, the key concern, and the final recommendation.
 
-## EXECUTIVE SUMMARY
-Write one institutional-style paragraph explaining the investment case, the key concern, and the final recommendation.
+    ## INVESTMENT THESIS
+    Explain in 3 bullet points what must be true for the stock to be attractive.
+    Each point must connect fundamentals to valuation.
 
-## INVESTMENT THESIS
-Explain in 3 bullet points what must be true for the stock to be attractive.
-Each point must connect fundamentals to valuation.
+    ## KEY FINANCIAL INTERPRETATION
+    Analyze the financial data below.
+    Do not just repeat the numbers.
+    Explain what the relationship between revenue, net income, debt, market cap, and P/E says about business quality.
 
-## KEY FINANCIAL INTERPRETATION
-Analyze the financial data below.
-Do not just repeat the numbers.
-Explain what the relationship between revenue, net income, debt, market cap, and P/E says about business quality.
+    ## VALUATION ASSESSMENT
+    - Interpret the P/E ratio.
+    - Explain whether the valuation looks demanding, reasonable, or cheap.
+    - Compare valuation to profitability quality.
+    - Explain what expectations appear embedded in the stock price.
 
-## VALUATION ASSESSMENT
-- Interpret the P/E ratio.
-- Explain whether the valuation looks demanding, reasonable, or cheap.
-- Compare valuation to profitability quality.
-- Explain what expectations appear embedded in the stock price.
+    ## PROFITABILITY & EARNINGS QUALITY
+    - Analyze margin strength using revenue, net income, and net profit margin.
+    - Explain whether profits look scalable, fragile, cyclical, or durable.
+    - Identify whether earnings quality supports the valuation.
+    
+    ## BALANCE SHEET & FINANCIAL RISK
+    - Analyze debt relative to revenue and net income.
+    - Classify leverage risk as Low, Moderate, or High.
+    - Explain how debt could affect downside risk, flexibility, and shareholder returns.
 
-## PROFITABILITY & EARNINGS QUALITY
-- Analyze margin strength using revenue, net income, and net profit margin.
-- Explain whether profits look scalable, fragile, cyclical, or durable.
-- Identify whether earnings quality supports the valuation.
+    ## GROWTH & REINVESTMENT OUTLOOK
+    - Classify the company as Hypergrowth, Growth, Mature, or Declining.
+    - Explain whether the company appears to have room for reinvestment.
+    - If the data does not prove growth, explicitly say so.
+    - Use PDF evidence if available.
+    
+    ## MARKET EXPECTATIONS GAP
+    Explain the gap between what the market seems to expect and what the financial data actually proves.
+    State whether sentiment appears too optimistic, too pessimistic, or balanced.
+    
+    ## DOWNSIDE CASE
+    Explain what could go wrong.
+    Focus on valuation compression, margin weakness, debt risk, weak growth, or earnings disappointment.
+    
+    ## UPSIDE CASE
+    Explain what would need to happen for the stock to perform well.
+    Do not assume upside unless supported by the data.
+    
+    ## INVESTMENT DECISION
+    Give a final Buy, Hold, or Sell rating.
+    The decision must follow logically from:
+    1. valuation
+    2. profitability
+    3. balance sheet risk
+    4. growth outlook
+    5. expectations gap
+    
+    Include a confidence score from 1 to 10.
+    
+    ## RISKS
+    Provide specific bullet-point risks.
+    
+    ## SWOT
+    Provide bullet points under:
+    - Strengths
+    - Weaknesses
+    - Opportunities
+    - Threats
 
-## BALANCE SHEET & FINANCIAL RISK
-- Analyze debt relative to revenue and net income.
-- Classify leverage risk as Low, Moderate, or High.
-- Explain how debt could affect downside risk, flexibility, and shareholder returns.
-
-## GROWTH & REINVESTMENT OUTLOOK
-- Classify the company as Hypergrowth, Growth, Mature, or Declining.
-- Explain whether the company appears to have room for reinvestment.
-- If the data does not prove growth, explicitly say so.
-- Use PDF evidence if available.
-
-## MARKET EXPECTATIONS GAP
-Explain the gap between what the market seems to expect and what the financial data actually proves.
-State whether sentiment appears too optimistic, too pessimistic, or balanced.
-
-## DOWNSIDE CASE
-Explain what could go wrong.
-Focus on valuation compression, margin weakness, debt risk, weak growth, or earnings disappointment.
-
-## UPSIDE CASE
-Explain what would need to happen for the stock to perform well.
-Do not assume upside unless supported by the data.
-
-## INVESTMENT DECISION
-Give a final Buy, Hold, or Sell rating.
-The decision must follow logically from:
-1. valuation
-2. profitability
-3. balance sheet risk
-4. growth outlook
-5. expectations gap
-
-Include a confidence score from 1 to 10.
-
-## RISKS
-Provide specific bullet-point risks.
-
-## SWOT
-Provide bullet points under:
-- Strengths
-- Weaknesses
-- Opportunities
-- Threats
-
-Memo style: {memo_style}
-Company: {company_name}
-
-FINANCIAL DATA:
-
-Company: {company_name}
-Sector: {financials.get('sector', 'N/A')}
-Market Cap: {format_billions(financials.get('marketCap'))}
-Revenue: {format_billions(financials.get('revenue'))}
-Net Income: {format_billions(financials.get('netIncome'))}
-Net Profit Margin: {safe_margin(financials.get('netIncome'), financials.get('revenue'))}
-Debt: {format_billions(financials.get('debt'))}
-P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
-
-PDF TEXT:
-{document_text[:8000]}
-
-STYLE REQUIREMENTS:
-- Write like a professional equity research analyst.
-- Be skeptical and judgment-based.
-- Avoid generic MBA language.
-- Do not simply describe; interpret.
-- Explain implications for investors.
-- Use markdown only.
-- Do not use HTML.
-- Do not add extra sections.
-"""
+    Memo style: {memo_style}
+    Company: {company_name}
+    
+    FINANCIAL DATA:
+    
+    Company: {company_name}
+    Sector: {financials.get('sector', 'N/A')}
+    Market Cap: {format_billions(financials.get('marketCap'))}
+    Revenue: {format_billions(financials.get('revenue'))}
+    Net Income: {format_billions(financials.get('netIncome'))}
+    Net Profit Margin: {safe_margin(financials.get('netIncome'), financials.get('revenue'))}
+    Debt: {format_billions(financials.get('debt'))}
+    P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
+    
+    PDF TEXT:
+    {document_text[:8000]}
+    
+    STYLE REQUIREMENTS:
+    - Write like a professional equity research analyst.
+    - Be skeptical and judgment-based.
+    - Avoid generic MBA language.
+    - Do not simply describe; interpret.
+    - Explain implications for investors.
+    - Use markdown only.
+    - Do not use HTML.
+    - Do not add extra sections.
+    """
 
     with st.spinner("Generating memo..."):
-
+     
         response = client.responses.create(
             model="gpt-4.1",
             input=prompt
@@ -335,10 +335,10 @@ STYLE REQUIREMENTS:
 
     st.subheader("📄 Investment Memo")
 
-    st.markdown(
-    memo,
-    help=None
-    )
+st.markdown(
+memo,
+help=None
+)
 
     st.subheader("📈 Stock Price (1Y)")
 
