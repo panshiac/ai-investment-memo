@@ -99,35 +99,26 @@ strong {
 </style>
 """, unsafe_allow_html=True)
 
-col_logo_left, col_logo_center, col_logo_right = st.columns([1, 2, 1])
+st.markdown(
+    """
+    <div style='text-align:center;'>
+    """,
+    unsafe_allow_html=True
+)
 
-with col_logo_center:
-    st.image("logo.png", width=260)
+st.image("logo.png", width=350)
 
-st.markdown("""
-<div style="
-    text-align:center;
-    padding: 5px 20px 20px 20px;
-    margin-bottom: 20px;
-">
-    <h1 style="
-        color:#f8fafc;
-        margin-bottom:5px;
-        font-size:46px;
-        font-weight:700;
-    ">
+st.markdown(
+    """
+    <h1 style='text-align:center; color:white; margin-top:-10px;'>
         MemoGen
     </h1>
-
-    <p style="
-        color:#94a3b8;
-        font-size:18px;
-        margin-top:0;
-    ">
+    <p style='text-align:center; color:#94a3b8; font-size:18px;'>
         Institutional-Grade Equity Research Powered by AI
     </p>
-</div>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
 st.caption("Generate professional investment memos from company data, market metrics, and uploaded reports.")
 
