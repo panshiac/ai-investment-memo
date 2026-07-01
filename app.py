@@ -270,10 +270,12 @@ if st.button("Generate Memo"):
     ## DOWNSIDE CASE
     Explain what could go wrong.
     Focus on valuation compression, margin weakness, debt risk, weak growth, or earnings disappointment.
+    Give a rough estimate of what the stock price could be if the downside case materialises.
     
     ## UPSIDE CASE
     Explain what would need to happen for the stock to perform well.
     Do not assume upside unless supported by the data.
+    Give a rough estimate of what the stock price could be if the upside case materialises.
     
     ## INVESTMENT DECISION
     Give a final Buy, Hold, or Sell rating.
