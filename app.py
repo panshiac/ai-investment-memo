@@ -513,11 +513,27 @@ if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
     financials = get_financial_data(ticker)
-    dcf = calculate_dcf(
+    bear_dcf = calculate_dcf(
+        financials,
+        max(growth_assumption - 0.05, 0.01),
+        max(fcf_margin_assumption - 0.03, 0.03),
+        wacc_assumption + 0.01,
+        terminal_growth_assumption
+    )
+    
+    base_dcf = calculate_dcf(
         financials,
         growth_assumption,
         fcf_margin_assumption,
         wacc_assumption,
+        terminal_growth_assumption
+    )
+
+    bull_dcf = calculate_dcf(
+        financials,
+        growth_assumption + 0.05,
+        fcf_margin_assumption + 0.03,
+        max(wacc_assumption - 0.01, 0.05),
         terminal_growth_assumption
     )
 
@@ -629,15 +645,19 @@ if st.button("Generate Memo"):
     Debt: {format_billions(financials.get('debt'))}
     P/E Ratio: {round(financials.get('pe_ratio'), 2) if isinstance(financials.get('pe_ratio'), (int, float)) else 'N/A'}
 
-    DCF VALUATION:
-    {f'''
-    Revenue Growth Assumption: {dcf["growth"] * 100:.1f}%
-    WACC: {dcf["wacc"] * 100:.1f}%
-    Terminal Growth: {dcf["terminal_growth"] * 100:.1f}%
-    Intrinsic Value Per Share: ${dcf["intrinsic_value_per_share"]:.2f}
-    Current Share Price: ${dcf["current_price"]:.2f}
-    DCF Upside/Downside: {dcf["upside_downside"]:.1f}%
-    ''' if dcf else 'DCF unavailable due to insufficient financial data.'}
+    DCF SCENARIOS:
+
+    Bear Case Intrinsic Value:
+    ${bear_dcf['intrinsic_value_per_share']:.2f}
+    
+    Base Case Intrinsic Value:
+    ${base_dcf['intrinsic_value_per_share']:.2f}
+    
+    Bull Case Intrinsic Value:
+    ${bull_dcf['intrinsic_value_per_share']:.2f}
+    
+    Base Case Upside/Downside:
+    {base_dcf['upside_downside']:.1f}%
 
     
     PDF TEXT:
@@ -661,6 +681,9 @@ if st.button("Generate Memo"):
     - Do NOT use markdown emphasis.
     - Do NOT place financial values directly next to words.
     - Always write financial values with spaces around them, for example: $253.49B revenue, not $253.49Brevenue.
+    - Discuss why the bear and bull valuations differ.
+    - Assess whether the current valuation already prices in a bull-case outcome.
+    - If the stock appears overvalued, explain what assumptions are required to justify today's price.
     """
 
     with st.spinner("Generating memo..."):
@@ -706,38 +729,51 @@ if st.button("Generate Memo"):
 
     st.caption(f"Sector: {financials.get('sector', 'N/A')}")
 
-    st.subheader("📐 5-Year Automated DCF Valuation")
+    st.subheader("📐 5-Year DCF Scenario Analysis")
 
-    if dcf:
-        dcf_col1, dcf_col2, dcf_col3 = st.columns(3)
+if base_dcf:
 
-        dcf_col1.metric(
-            "Intrinsic Value",
-            f"${dcf['intrinsic_value_per_share']:.2f}"
-        )
+    scenario_df = pd.DataFrame({
+        "Scenario": ["Bear", "Base", "Bull"],
+        "Intrinsic Value": [
+            f"${bear_dcf['intrinsic_value_per_share']:.2f}",
+            f"${base_dcf['intrinsic_value_per_share']:.2f}",
+            f"${bull_dcf['intrinsic_value_per_share']:.2f}"
+        ],
+        "Upside / Downside": [
+            f"{bear_dcf['upside_downside']:.1f}%",
+            f"{base_dcf['upside_downside']:.1f}%",
+            f"{bull_dcf['upside_downside']:.1f}%"
+        ]
+    })
 
-        dcf_col2.metric(
-            "Current Price",
-            f"${dcf['current_price']:.2f}"
-        )
+    st.table(scenario_df)
 
-        dcf_col3.metric(
-            "Upside / Downside",
-            f"{dcf['upside_downside']:.1f}%"
-        )
+    st.markdown("### Base Case Forecast")
 
-        st.caption(
-            f"Assumptions: Revenue growth {dcf['growth']*100:.1f}%, "
-            f"WACC {dcf['wacc']*100:.1f}%, "
-            f"Terminal growth {dcf['terminal_growth']*100:.1f}%."
-        )
+    dcf_col1, dcf_col2, dcf_col3 = st.columns(3)
 
-        dcf_table = pd.DataFrame(dcf["rows"])
-        dcf_table["Projected FCF"] = dcf_table["Projected FCF"].apply(format_billions)
-        dcf_table["PV of FCF"] = dcf_table["PV of FCF"].apply(format_billions)
+    dcf_col1.metric(
+        "Intrinsic Value",
+        f"${base_dcf['intrinsic_value_per_share']:.2f}"
+    )
 
-        st.table(dcf_table)
+    dcf_col2.metric(
+        "Current Price",
+        f"${base_dcf['current_price']:.2f}"
+    )
 
+    dcf_col3.metric(
+        "Upside / Downside",
+        f"{base_dcf['upside_downside']:.1f}%"
+    )
+
+    dcf_table = pd.DataFrame(base_dcf["rows"])
+
+    dcf_table["Projected FCF"] = dcf_table["Projected FCF"].apply(format_billions)
+    dcf_table["PV of FCF"] = dcf_table["PV of FCF"].apply(format_billions)
+
+    st.table(dcf_table)
     else:
         st.warning("DCF unavailable because some required financial data is missing.")
 
