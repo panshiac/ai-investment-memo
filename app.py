@@ -146,16 +146,34 @@ st.info("For educational and informational purposes only. This is not financial 
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    company_name = st.text_input("Enter company name")
 
-    memo_style = st.selectbox(
-        "Select memo style",
-        ["Conservative", "Neutral", "Aggressive"]
+    st.markdown(
+        "<p style='color:white; font-size:20px; font-weight:600; margin-bottom:8px;'>Enter company name</p>",
+        unsafe_allow_html=True
+    )
+    company_name = st.text_input(
+        "",
+        label_visibility="collapsed"
     )
 
+    st.markdown(
+        "<p style='color:white; font-size:20px; font-weight:600; margin-bottom:8px;'>Select memo style</p>",
+        unsafe_allow_html=True
+    )
+    memo_style = st.selectbox(
+        "",
+        ["Conservative", "Neutral", "Aggressive"],
+        label_visibility="collapsed"
+    )
+
+    st.markdown(
+        "<p style='color:white; font-size:20px; font-weight:600; margin-bottom:8px;'>Upload a PDF (optional)</p>",
+        unsafe_allow_html=True
+    )
     uploaded_file = st.file_uploader(
-        "Upload a PDF (optional)",
-        type=["pdf"]
+        "",
+        type=["pdf"],
+        label_visibility="collapsed"
     )
 
 with col2:
