@@ -729,7 +729,7 @@ if st.button("Generate Memo"):
 
     st.caption(f"Sector: {financials.get('sector', 'N/A')}")
 
-        st.subheader("📐 5-Year DCF Scenario Analysis")
+    st.subheader("📐 5-Year DCF Scenario Analysis")
 
     if base_dcf:
 
