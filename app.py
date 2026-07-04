@@ -109,7 +109,7 @@ st.markdown(
 _, col, _ = st.columns([2, 5, 2])
 
 with col:
-    st.image("logo.png", width=700)
+    st.image("logo.png", width=900)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
