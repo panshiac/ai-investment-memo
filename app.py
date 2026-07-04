@@ -106,14 +106,17 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.image("logo.png", width=350)
+left, center, right = st.columns([1, 2, 1])
+
+with center:
+    st.image("logo.png", width=500)
 
 st.markdown(
     """
-    <h1 style='text-align:center; color:white; margin-top:-10px;'>
+    <h1 style='text-align:center; color:white; font-size:64xp; font-weight:800; margin-top:20px; margin-bottom:10px'>
         MemoGen
     </h1>
-    <p style='text-align:center; color:#94a3b8; font-size:18px;'>
+    <p style='text-align:center; color:#94a3b8; font-size:24px; margin-bottom:30px'>
         Institutional-Grade Equity Research Powered by AI
     </p>
     """,
