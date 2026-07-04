@@ -424,6 +424,10 @@ if st.button("Generate Memo"):
     - Use normal paragraphs with spaces between words.
     - Do not use superscript, subscript, small text, or HTML formatting.
     - Do not use inline markdown formatting inside paragraphs.
+    - Do NOT use underscores.
+    - Do NOT use markdown emphasis.
+    - Do NOT place financial values directly next to words.
+    - Always write financial values with spaces around them, for example: $253.49B revenue, not $253.49Brevenue.
     """
 
     with st.spinner("Generating memo..."):
@@ -439,6 +443,8 @@ if st.button("Generate Memo"):
 
     memo = memo.replace("***", "")
     memo = memo.replace("**", "")
+    memo = memo.replace("_", "")
+    memo = memo.replace("$", "\\$")
 
     st.markdown(
     memo,
