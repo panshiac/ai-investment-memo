@@ -204,18 +204,68 @@ def get_financial_data(company):
         stock = yf.Ticker(company)
 
         info = stock.info
+        fast_info = stock.fast_info
+
+        income_stmt = stock.income_stmt
+        balance_sheet = stock.balance_sheet
+
+        revenue = info.get("totalRevenue")
+        net_income = info.get("netIncomeToCommon")
+        debt = info.get("totalDebt")
+
+        if revenue is None or revenue == 0:
+            try:
+                revenue = income_stmt.loc["Total Revenue"].iloc[0]
+            except:
+                revenue = None
+
+        if net_income is None or net_income == 0:
+            try:
+                net_income = income_stmt.loc["Net Income"].iloc[0]
+            except:
+                net_income = None
+
+        if debt is None or debt == 0:
+            try:
+                debt = balance_sheet.loc["Total Debt"].iloc[0]
+            except:
+                debt = None
+
+        market_cap = info.get("marketCap")
+        if market_cap is None:
+            try:
+                market_cap = fast_info.get("market_cap")
+            except:
+                market_cap = None
+
+        last_price = info.get("currentPrice") or info.get("regularMarketPrice")
+        if last_price is None:
+            try:
+                last_price = fast_info.get("last_price")
+            except:
+                last_price = None
 
         return {
-            "marketCap": info.get("marketCap",0),
-            "lastPrice": info.get("regularMarketPrice",0),
-            "sector": info.get("sector","N/A"),
-            "revenue": info.get("totalRevenue",0),
-            "netIncome": info.get("netIncomeToCommon",0),
-            "pe_ratio": info.get("trailingPE","N/A"),
-            "debt": info.get("totalDebt",0),
+            "marketCap": market_cap,
+            "lastPrice": last_price,
+            "sector": info.get("sector", "N/A"),
+            "revenue": revenue,
+            "netIncome": net_income,
+            "pe_ratio": info.get("trailingPE"),
+            "debt": debt,
         }
 
     except Exception as e:
+        return {
+            "marketCap": None,
+            "lastPrice": None,
+            "sector": "N/A",
+            "revenue": None,
+            "netIncome": None,
+            "pe_ratio": None,
+            "debt": None,
+            "error": str(e)
+        }    except Exception as e:
         return {
             "error": "Yahoo Finance rate limit",
             "details": str(e)
@@ -357,7 +407,7 @@ if st.button("Generate Memo"):
     Net Income: {format_billions(financials.get('netIncome'))}
     Net Profit Margin: {safe_margin(financials.get('netIncome'), financials.get('revenue'))}
     Debt: {format_billions(financials.get('debt'))}
-    P/E Ratio: {round(financials.get('pe_ratio', 0), 2) if financials.get('pe_ratio') else 'N/A'}
+    P/E Ratio: {round(financials.get('pe_ratio'), 2) if isinstance(financials.get('pe_ratio'), (int, float)) else 'N/A'}
     
     PDF TEXT:
     {document_text[:8000]}
