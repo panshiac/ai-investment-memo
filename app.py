@@ -6,6 +6,11 @@ from pypdf import PdfReader
 import yfinance as yf
 from yahooquery import search
 import pandas as pd
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 load_dotenv()
 
@@ -294,6 +299,66 @@ def get_stock_chart(ticker):
     hist = stock.history(period="10y")
     return hist
 
+def create_pdf(memo, company_name, financials):
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "Title",
+        parent=styles["Title"],
+        fontSize=22,
+        textColor=colors.HexColor("#0f172a"),
+        spaceAfter=20
+    )
+
+    heading_style = ParagraphStyle(
+        "Heading",
+        parent=styles["Heading2"],
+        fontSize=14,
+        textColor=colors.HexColor("#2563eb"),
+        spaceBefore=12,
+        spaceAfter=8
+    )
+
+    body_style = ParagraphStyle(
+        "Body",
+        parent=styles["BodyText"],
+        fontSize=10,
+        leading=14,
+        spaceAfter=6
+    )
+
+    story = []
+
+    story.append(Paragraph(f"{company_name.title()} Investment Memo", title_style))
+    story.append(Spacer(1, 12))
+
+    story.append(Paragraph("Financial Overview", heading_style))
+    story.append(Paragraph(f"Market Cap: {format_billions(financials.get('marketCap'))}", body_style))
+    story.append(Paragraph(f"Revenue: {format_billions(financials.get('revenue'))}", body_style))
+    story.append(Paragraph(f"Net Income: {format_billions(financials.get('netIncome'))}", body_style))
+    story.append(Paragraph(f"Debt: {format_billions(financials.get('debt'))}", body_style))
+    story.append(Paragraph(f"Sector: {financials.get('sector', 'N/A')}", body_style))
+    story.append(Spacer(1, 12))
+
+    for line in memo.split("\n"):
+        line = line.strip()
+
+        if not line:
+            story.append(Spacer(1, 6))
+        elif line.startswith("##"):
+            story.append(Paragraph(line.replace("#", "").strip(), heading_style))
+        elif line.startswith("-"):
+            story.append(Paragraph("• " + line[1:].strip(), body_style))
+        else:
+            story.append(Paragraph(line, body_style))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
 if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
@@ -473,8 +538,11 @@ if st.button("Generate Memo"):
 
     st.caption(f"Sector: {financials.get('sector', 'N/A')}")
 
+    pdf_file = create_pdf(memo, company_name, financials)
+
     st.download_button(
-        "Download Memo",
-        memo,
-        file_name=f"{company_name}_memo.md"
+        "Download Memo as PDF",
+        data=pdf_file,
+        file_name=f"{company_name}_investment_memo.pdf",
+        mime="application/pdf"
     )
