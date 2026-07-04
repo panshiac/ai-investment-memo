@@ -111,7 +111,16 @@ _, col, _ = st.columns([2, 5, 2])
 with col:
     st.image("logo.png", width=900)
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <style>
+    div[data-testid="stImage"] {
+        margin-bottom: -70px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.caption("Generate professional investment memos from company data, market metrics, and uploaded reports.")
 
