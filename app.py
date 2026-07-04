@@ -731,7 +731,7 @@ if st.button("Generate Memo"):
 
     st.subheader("📐 5-Year DCF Scenario Analysis")
 
-if base_dcf:
+    if base_dcf:
 
     scenario_df = pd.DataFrame({
         "Scenario": ["Bear", "Base", "Bull"],
