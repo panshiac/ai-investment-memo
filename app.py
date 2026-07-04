@@ -78,18 +78,7 @@ div[data-testid="stSelectbox"] p {
     font-size: 16px;
 }
 
-/* Financial metrics */
-div[data-testid="stMetricLabel"] {
-    color: #cbd5e1 !important;
-    font-size: 18px !important;
-    font-weight: 600 !important;
-}
 
-div[data-testid="stMetricValue"] {
-    color: #ffffff !important;
-    font-size: 34px !important;
-    font-weight: 700 !important;
-}
 
 /* select box */
 .stSelectbox div {
@@ -144,6 +133,47 @@ mark {
 
 strong {
     color: #f8fafc !important;
+}
+
+</style>
+
+Replace it with this:
+
+strong {
+    color: #f8fafc !important;
+}
+
+/* Financial metrics */
+div[data-testid="stMetricLabel"] {
+    color: white !important;
+    font-size: 18px !important;
+    font-weight: 400 !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: white !important;
+    font-size: 34px !important;
+    font-weight: 400 !important;
+}
+
+/* DCF table */
+[data-testid="stTable"] table {
+    color: white !important;
+}
+
+[data-testid="stTable"] th {
+    color: white !important;
+    background-color: #1e293b !important;
+    font-weight: 500 !important;
+}
+
+[data-testid="stTable"] td {
+    color: white !important;
+}
+
+[data-testid="stTable"] td,
+[data-testid="stTable"] th {
+    border: 1px solid #334155 !important;
 }
 
 </style>
