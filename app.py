@@ -49,6 +49,16 @@ h1, h2, h3, h4 {
     color: #9ca3af !important;
 }
 
+/* Input labels */
+div[data-testid="stTextInput"] label,
+div[data-testid="stSelectbox"] label,
+div[data-testid="stFileUploader"] label {
+    color: #e2e8f0 !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.4px;
+}
+
 /* input text */
 .stTextInput input {
     color: black !important;
