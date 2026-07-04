@@ -59,6 +59,13 @@ div[data-testid="stFileUploader"] label {
     letter-spacing: 0.4px;
 }
 
+div[data-baseweb="select"] + label,
+div[data-testid="stSelectbox"] p {
+    color: white !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+}
+
 /* input text */
 .stTextInput input {
     color: black !important;
