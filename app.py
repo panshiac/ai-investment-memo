@@ -729,51 +729,53 @@ if st.button("Generate Memo"):
 
     st.caption(f"Sector: {financials.get('sector', 'N/A')}")
 
-    st.subheader("📐 5-Year DCF Scenario Analysis")
+        st.subheader("📐 5-Year DCF Scenario Analysis")
 
     if base_dcf:
 
-    scenario_df = pd.DataFrame({
-        "Scenario": ["Bear", "Base", "Bull"],
-        "Intrinsic Value": [
-            f"${bear_dcf['intrinsic_value_per_share']:.2f}",
-            f"${base_dcf['intrinsic_value_per_share']:.2f}",
-            f"${bull_dcf['intrinsic_value_per_share']:.2f}"
-        ],
-        "Upside / Downside": [
-            f"{bear_dcf['upside_downside']:.1f}%",
-            f"{base_dcf['upside_downside']:.1f}%",
-            f"{bull_dcf['upside_downside']:.1f}%"
-        ]
-    })
+        scenario_df = pd.DataFrame({
+            "Scenario": ["Bear", "Base", "Bull"],
+            "Intrinsic Value": [
+                f"${bear_dcf['intrinsic_value_per_share']:.2f}",
+                f"${base_dcf['intrinsic_value_per_share']:.2f}",
+                f"${bull_dcf['intrinsic_value_per_share']:.2f}"
+            ],
+            "Upside / Downside": [
+                f"{bear_dcf['upside_downside']:.1f}%",
+                f"{base_dcf['upside_downside']:.1f}%",
+                f"{bull_dcf['upside_downside']:.1f}%"
+            ]
+        })
 
-    st.table(scenario_df)
+        st.table(scenario_df)
 
-    st.markdown("### Base Case Forecast")
+        st.markdown("### Base Case Forecast")
 
-    dcf_col1, dcf_col2, dcf_col3 = st.columns(3)
+        dcf_col1, dcf_col2, dcf_col3 = st.columns(3)
 
-    dcf_col1.metric(
-        "Intrinsic Value",
-        f"${base_dcf['intrinsic_value_per_share']:.2f}"
-    )
+        dcf_col1.metric(
+            "Intrinsic Value",
+            f"${base_dcf['intrinsic_value_per_share']:.2f}"
+        )
 
-    dcf_col2.metric(
-        "Current Price",
-        f"${base_dcf['current_price']:.2f}"
-    )
+        dcf_col2.metric(
+            "Current Price",
+            f"${base_dcf['current_price']:.2f}"
+        )
 
-    dcf_col3.metric(
-        "Upside / Downside",
-        f"{base_dcf['upside_downside']:.1f}%"
-    )
+        dcf_col3.metric(
+            "Upside / Downside",
+            f"{base_dcf['upside_downside']:.1f}%"
+        )
 
-    dcf_table = pd.DataFrame(base_dcf["rows"])
+        dcf_table = pd.DataFrame(base_dcf["rows"])
 
-    dcf_table["Projected FCF"] = dcf_table["Projected FCF"].apply(format_billions)
-    dcf_table["PV of FCF"] = dcf_table["PV of FCF"].apply(format_billions)
+        dcf_table["Projected Revenue"] = dcf_table["Projected Revenue"].apply(format_billions)
+        dcf_table["Projected FCF"] = dcf_table["Projected FCF"].apply(format_billions)
+        dcf_table["PV of FCF"] = dcf_table["PV of FCF"].apply(format_billions)
 
-    st.table(dcf_table)
+        st.table(dcf_table)
+
     else:
         st.warning("DCF unavailable because some required financial data is missing.")
 
