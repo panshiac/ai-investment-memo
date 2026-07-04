@@ -173,6 +173,17 @@ div[data-testid="stMetricValue"] div {
     border: 1px solid #334155 !important;
 }
 
+/* Slider labels */
+.stSlider label,
+.stSlider p,
+div[data-testid="stSlider"] label,
+div[data-testid="stSlider"] p {
+    color: white !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
