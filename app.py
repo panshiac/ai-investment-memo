@@ -106,22 +106,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-left, center, right = st.columns([1, 2, 1])
+_, col, _ = st.columns([2, 5, 2])
 
-with center:
-    st.image("logo.png", width=500)
+with col:
+    st.image("logo.png", width=700)
 
-st.markdown(
-    """
-    <h1 style='text-align:center; color:white; font-size:64xp; font-weight:800; margin-top:20px; margin-bottom:10px'>
-        MemoGen
-    </h1>
-    <p style='text-align:center; color:#94a3b8; font-size:24px; margin-bottom:30px'>
-        Institutional-Grade Equity Research Powered by AI
-    </p>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("<br>", unsafe_allow_html=True)
 
 st.caption("Generate professional investment memos from company data, market metrics, and uploaded reports.")
 
