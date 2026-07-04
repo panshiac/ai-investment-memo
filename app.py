@@ -314,6 +314,74 @@ def get_stock_chart(ticker):
     hist = stock.history(period="10y")
     return hist
 
+def calculate_dcf(financials):
+    revenue = financials.get("revenue")
+    net_income = financials.get("netIncome")
+    debt = financials.get("debt") or 0
+    market_cap = financials.get("marketCap")
+    current_price = financials.get("lastPrice")
+
+    if not revenue or not net_income or not market_cap or not current_price:
+        return None
+
+    net_margin = net_income / revenue
+
+    # Automated assumptions
+    base_growth = 0.08
+    terminal_growth = 0.025
+    wacc = 0.09
+
+    # Adjust assumptions based on profitability
+    if net_margin > 0.25:
+        base_growth = 0.12
+    elif net_margin < 0.05:
+        base_growth = 0.04
+
+    # Use net income as simplified free cash flow proxy
+    starting_fcf = net_income
+
+    dcf_rows = []
+    total_pv_fcf = 0
+
+    for year in range(1, 6):
+        growth = max(base_growth - ((year - 1) * 0.015), 0.03)
+        projected_fcf = starting_fcf * ((1 + growth) ** year)
+        pv_fcf = projected_fcf / ((1 + wacc) ** year)
+
+        total_pv_fcf += pv_fcf
+
+        dcf_rows.append({
+            "Year": year,
+            "Growth Rate": f"{growth * 100:.1f}%",
+            "Projected FCF": projected_fcf,
+            "PV of FCF": pv_fcf
+        })
+
+    final_year_fcf = dcf_rows[-1]["Projected FCF"]
+    terminal_value = final_year_fcf * (1 + terminal_growth) / (wacc - terminal_growth)
+    pv_terminal_value = terminal_value / ((1 + wacc) ** 5)
+
+    enterprise_value = total_pv_fcf + pv_terminal_value
+    equity_value = enterprise_value - debt
+
+    shares_outstanding = market_cap / current_price
+    intrinsic_value_per_share = equity_value / shares_outstanding
+
+    upside_downside = ((intrinsic_value_per_share - current_price) / current_price) * 100
+
+    return {
+        "base_growth": base_growth,
+        "terminal_growth": terminal_growth,
+        "wacc": wacc,
+        "net_margin": net_margin,
+        "enterprise_value": enterprise_value,
+        "equity_value": equity_value,
+        "intrinsic_value_per_share": intrinsic_value_per_share,
+        "current_price": current_price,
+        "upside_downside": upside_downside,
+        "rows": dcf_rows
+    }
+
 def create_pdf(memo, company_name, financials):
     buffer = BytesIO()
 
@@ -378,6 +446,7 @@ if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
     financials = get_financial_data(ticker)
+    dcf = calculate_dcf(financials)
 
     display_name = company_name.title()
 
@@ -486,6 +555,17 @@ if st.button("Generate Memo"):
     Net Profit Margin: {safe_margin(financials.get('netIncome'), financials.get('revenue'))}
     Debt: {format_billions(financials.get('debt'))}
     P/E Ratio: {round(financials.get('pe_ratio'), 2) if isinstance(financials.get('pe_ratio'), (int, float)) else 'N/A'}
+
+    DCF VALUATION:
+    {f'''
+    Base Growth Assumption: {dcf["base_growth"] * 100:.1f}%
+    WACC: {dcf["wacc"] * 100:.1f}%
+    Terminal Growth: {dcf["terminal_growth"] * 100:.1f}%
+    Intrinsic Value Per Share: ${dcf["intrinsic_value_per_share"]:.2f}
+    Current Share Price: ${dcf["current_price"]:.2f}
+    DCF Upside/Downside: {dcf["upside_downside"]:.1f}%
+    ''' if dcf else 'DCF unavailable due to insufficient financial data.'}
+
     
     PDF TEXT:
     {document_text[:8000]}
@@ -552,6 +632,41 @@ if st.button("Generate Memo"):
     col6.metric("Debt", format_billions(financials.get("debt")))
 
     st.caption(f"Sector: {financials.get('sector', 'N/A')}")
+
+    st.subheader("📐 5-Year Automated DCF Valuation")
+
+    if dcf:
+        dcf_col1, dcf_col2, dcf_col3 = st.columns(3)
+
+        dcf_col1.metric(
+            "Intrinsic Value",
+            f"${dcf['intrinsic_value_per_share']:.2f}"
+        )
+
+        dcf_col2.metric(
+            "Current Price",
+            f"${dcf['current_price']:.2f}"
+        )
+
+        dcf_col3.metric(
+            "Upside / Downside",
+            f"{dcf['upside_downside']:.1f}%"
+        )
+
+        st.caption(
+            f"Assumptions: Base growth {dcf['base_growth']*100:.1f}%, "
+            f"WACC {dcf['wacc']*100:.1f}%, "
+            f"Terminal growth {dcf['terminal_growth']*100:.1f}%."
+        )
+
+        dcf_table = pd.DataFrame(dcf["rows"])
+        dcf_table["Projected FCF"] = dcf_table["Projected FCF"].apply(format_billions)
+        dcf_table["PV of FCF"] = dcf_table["PV of FCF"].apply(format_billions)
+
+        st.table(dcf_table)
+
+    else:
+        st.warning("DCF unavailable because some required financial data is missing.")
 
     pdf_file = create_pdf(memo, company_name, financials)
 
