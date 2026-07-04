@@ -207,6 +207,23 @@ with col2:
     ### 💡 Tip
     Uploading a PDF improves accuracy significantly.
     """)
+
+st.markdown("### 📐 DCF Assumptions")
+
+dcf_col1, dcf_col2, dcf_col3, dcf_col4 = st.columns(4)
+
+with dcf_col1:
+    growth_assumption = st.slider("Revenue Growth", 0.0, 30.0, 8.0) / 100
+
+with dcf_col2:
+    fcf_margin_assumption = st.slider("FCF Margin", 0.0, 40.0, 10.0) / 100
+
+with dcf_col3:
+    wacc_assumption = st.slider("WACC", 5.0, 20.0, 9.0) / 100
+
+with dcf_col4:
+    terminal_growth_assumption = st.slider("Terminal Growth", 0.0, 5.0, 2.5) / 100
+
 def extract_pdf_text(file):
     reader = PdfReader(file)
     text = ""
@@ -225,31 +242,27 @@ def get_financial_data(company):
 
         info = stock.info
         fast_info = stock.fast_info
-
         income_stmt = stock.income_stmt
         balance_sheet = stock.balance_sheet
+        cashflow = stock.cashflow
 
-        revenue = info.get("totalRevenue")
-        net_income = info.get("netIncomeToCommon")
-        debt = info.get("totalDebt")
-
-        if revenue is None or revenue == 0:
+        def get_statement_value(statement, row_name):
             try:
-                revenue = income_stmt.loc["Total Revenue"].iloc[0]
+                return statement.loc[row_name].iloc[0]
             except:
-                revenue = None
+                return None
 
-        if net_income is None or net_income == 0:
-            try:
-                net_income = income_stmt.loc["Net Income"].iloc[0]
-            except:
-                net_income = None
+        revenue = info.get("totalRevenue") or get_statement_value(income_stmt, "Total Revenue")
+        net_income = info.get("netIncomeToCommon") or get_statement_value(income_stmt, "Net Income")
+        debt = info.get("totalDebt") or get_statement_value(balance_sheet, "Total Debt")
+        cash = info.get("totalCash") or get_statement_value(balance_sheet, "Cash And Cash Equivalents")
+        operating_cash_flow = get_statement_value(cashflow, "Operating Cash Flow")
+        capex = get_statement_value(cashflow, "Capital Expenditure")
 
-        if debt is None or debt == 0:
-            try:
-                debt = balance_sheet.loc["Total Debt"].iloc[0]
-            except:
-                debt = None
+        if operating_cash_flow is not None and capex is not None:
+            free_cash_flow = operating_cash_flow + capex
+        else:
+            free_cash_flow = info.get("freeCashflow")
 
         market_cap = info.get("marketCap")
         if market_cap is None:
@@ -265,6 +278,10 @@ def get_financial_data(company):
             except:
                 last_price = None
 
+        shares_outstanding = info.get("sharesOutstanding")
+        if shares_outstanding is None and market_cap and last_price:
+            shares_outstanding = market_cap / last_price
+
         return {
             "marketCap": market_cap,
             "lastPrice": last_price,
@@ -273,6 +290,11 @@ def get_financial_data(company):
             "netIncome": net_income,
             "pe_ratio": info.get("trailingPE"),
             "debt": debt,
+            "cash": cash,
+            "operatingCashFlow": operating_cash_flow,
+            "capitalExpenditure": capex,
+            "freeCashFlow": free_cash_flow,
+            "sharesOutstanding": shares_outstanding,
         }
 
     except Exception as e:
@@ -284,6 +306,11 @@ def get_financial_data(company):
             "netIncome": None,
             "pe_ratio": None,
             "debt": None,
+            "cash": None,
+            "operatingCashFlow": None,
+            "capitalExpenditure": None,
+            "freeCashFlow": None,
+            "sharesOutstanding": None,
             "error": str(e)
         }
 
@@ -314,66 +341,66 @@ def get_stock_chart(ticker):
     hist = stock.history(period="10y")
     return hist
 
-def calculate_dcf(financials):
+def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
     revenue = financials.get("revenue")
-    net_income = financials.get("netIncome")
+    free_cash_flow = financials.get("freeCashFlow")
     debt = financials.get("debt") or 0
-    market_cap = financials.get("marketCap")
+    cash = financials.get("cash") or 0
+    shares_outstanding = financials.get("sharesOutstanding")
     current_price = financials.get("lastPrice")
 
-    if not revenue or not net_income or not market_cap or not current_price:
+    if not revenue or not shares_outstanding or not current_price:
         return None
 
-    net_margin = net_income / revenue
-
-    # Automated assumptions
-    base_growth = 0.08
-    terminal_growth = 0.025
-    wacc = 0.09
-
-    # Adjust assumptions based on profitability
-    if net_margin > 0.25:
-        base_growth = 0.12
-    elif net_margin < 0.05:
-        base_growth = 0.04
-
-    # Use net income as simplified free cash flow proxy
-    starting_fcf = net_income
+    if free_cash_flow and revenue:
+        starting_fcf_margin = free_cash_flow / revenue
+    else:
+        starting_fcf_margin = fcf_margin
 
     dcf_rows = []
     total_pv_fcf = 0
 
     for year in range(1, 6):
-        growth = max(base_growth - ((year - 1) * 0.015), 0.03)
-        projected_fcf = starting_fcf * ((1 + growth) ** year)
+        yearly_growth = max(growth - ((year - 1) * 0.015), terminal_growth)
+
+        projected_revenue = revenue * ((1 + yearly_growth) ** year)
+
+        projected_margin = starting_fcf_margin + ((fcf_margin - starting_fcf_margin) * (year / 5))
+
+        projected_fcf = projected_revenue * projected_margin
+
         pv_fcf = projected_fcf / ((1 + wacc) ** year)
 
         total_pv_fcf += pv_fcf
 
         dcf_rows.append({
             "Year": year,
-            "Growth Rate": f"{growth * 100:.1f}%",
+            "Revenue Growth": f"{yearly_growth * 100:.1f}%",
+            "Projected Revenue": projected_revenue,
+            "FCF Margin": f"{projected_margin * 100:.1f}%",
             "Projected FCF": projected_fcf,
             "PV of FCF": pv_fcf
         })
 
     final_year_fcf = dcf_rows[-1]["Projected FCF"]
+
     terminal_value = final_year_fcf * (1 + terminal_growth) / (wacc - terminal_growth)
+
     pv_terminal_value = terminal_value / ((1 + wacc) ** 5)
 
     enterprise_value = total_pv_fcf + pv_terminal_value
-    equity_value = enterprise_value - debt
 
-    shares_outstanding = market_cap / current_price
+    equity_value = enterprise_value + cash - debt
+
     intrinsic_value_per_share = equity_value / shares_outstanding
 
     upside_downside = ((intrinsic_value_per_share - current_price) / current_price) * 100
 
     return {
-        "base_growth": base_growth,
-        "terminal_growth": terminal_growth,
+        "growth": growth,
+        "fcf_margin": fcf_margin,
         "wacc": wacc,
-        "net_margin": net_margin,
+        "terminal_growth": terminal_growth,
         "enterprise_value": enterprise_value,
         "equity_value": equity_value,
         "intrinsic_value_per_share": intrinsic_value_per_share,
@@ -446,7 +473,13 @@ if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
     financials = get_financial_data(ticker)
-    dcf = calculate_dcf(financials)
+    dcf = calculate_dcf(
+        financials,
+        growth_assumption,
+        fcf_margin_assumption,
+        wacc_assumption,
+        terminal_growth_assumption
+    )
 
     display_name = company_name.title()
 
