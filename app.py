@@ -135,40 +135,34 @@ strong {
     color: #f8fafc !important;
 }
 
-</style>
-
-Replace it with this:
-
-strong {
-    color: #f8fafc !important;
-}
-
 /* Financial metrics */
-div[data-testid="stMetricLabel"] {
+div[data-testid="stMetricLabel"],
+div[data-testid="stMetricLabel"] label,
+div[data-testid="stMetricLabel"] p {
     color: white !important;
     font-size: 18px !important;
     font-weight: 400 !important;
 }
 
-div[data-testid="stMetricValue"] {
+div[data-testid="stMetricValue"],
+div[data-testid="stMetricValue"] div {
     color: white !important;
     font-size: 34px !important;
     font-weight: 400 !important;
 }
 
 /* DCF table */
-[data-testid="stTable"] table {
+[data-testid="stTable"] table,
+[data-testid="stTable"] th,
+[data-testid="stTable"] td,
+[data-testid="stTable"] div,
+[data-testid="stTable"] p {
     color: white !important;
 }
 
 [data-testid="stTable"] th {
-    color: white !important;
     background-color: #1e293b !important;
     font-weight: 500 !important;
-}
-
-[data-testid="stTable"] td {
-    color: white !important;
 }
 
 [data-testid="stTable"] td,
