@@ -418,6 +418,7 @@ def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
             "Revenue Growth": f"{yearly_growth * 100:.1f}%",
             "Projected Revenue": projected_revenue,
             "FCF Margin": f"{projected_margin * 100:.1f}%",
+            "Starting FCF Margin": f"{starting_fcf_margin * 100:.1f}%",
             "Projected FCF": projected_fcf,
             "PV of FCF": pv_fcf
         })
@@ -429,6 +430,8 @@ def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
     pv_terminal_value = terminal_value / ((1 + wacc) ** 5)
 
     enterprise_value = total_pv_fcf + pv_terminal_value
+
+    terminal_value_share = pv_terminal_value / enterprise_value if enterprise_value else 0
 
     equity_value = enterprise_value + cash - debt
 
@@ -446,6 +449,8 @@ def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
         "intrinsic_value_per_share": intrinsic_value_per_share,
         "current_price": current_price,
         "upside_downside": upside_downside,
+        "terminal_value_share": terminal_value_share,
+        "starting_fcf_margin": starting_fcf_margin,
         "rows": dcf_rows
     }
 
@@ -659,6 +664,21 @@ if st.button("Generate Memo"):
     Base Case Upside/Downside:
     {base_dcf['upside_downside']:.1f}%
 
+    Bear Case Assumptions:
+    Revenue Growth: {max(growth_assumption - 0.05, 0.01)*100:.1f}%
+    FCF Margin: {max(fcf_margin_assumption - 0.03, 0.03)*100:.1f}%
+    WACC: {(wacc_assumption + 0.01)*100:.1f}%
+
+    Base Case Assumptions:
+    Revenue Growth: {growth_assumption*100:.1f}%
+    FCF Margin: {fcf_margin_assumption*100:.1f}%
+    WACC: {wacc_assumption*100:.1f}%
+
+    Bull Case Assumptions:
+    Revenue Growth: {(growth_assumption + 0.05)*100:.1f}%
+    FCF Margin: {(fcf_margin_assumption + 0.03)*100:.1f}%
+    WACC: {max(wacc_assumption - 0.01, 0.05)*100:.1f}%
+
     
     PDF TEXT:
     {document_text[:8000]}
@@ -747,7 +767,45 @@ if st.button("Generate Memo"):
             ]
         })
 
+    assumption_df = pd.DataFrame({
+        "Scenario": ["Bear", "Base", "Bull"],
+        "Revenue Growth": [
+            f"{max(growth_assumption - 0.05, 0.01)*100:.1f}%",
+            f"{growth_assumption*100:.1f}%",
+            f"{(growth_assumption + 0.05)*100:.1f}%"
+        ],
+        "FCF Margin": [
+            f"{max(fcf_margin_assumption - 0.03, 0.03)*100:.1f}%",
+            f"{fcf_margin_assumption*100:.1f}%",
+            f"{(fcf_margin_assumption + 0.03)*100:.1f}%"
+        ],
+        "WACC": [
+            f"{(wacc_assumption + 0.01)*100:.1f}%",
+            f"{wacc_assumption*100:.1f}%",
+            f"{max(wacc_assumption - 0.01, 0.05)*100:.1f}%"
+        ],
+        "Terminal Growth": [
+            f"{terminal_growth_assumption*100:.1f}%",
+            f"{terminal_growth_assumption*100:.1f}%",
+            f"{terminal_growth_assumption*100:.1f}%"
+        ]
+    })
+
+    st.markdown("### Scenario Assumptions")
+    st.table(assumption_df)
+
+    st.markdown("### Scenario Valuation")
+
         st.table(scenario_df)
+
+    st.caption(
+        f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value."
+    )
+
+    if base_dcf["terminal_value_share"] > 0.80:
+        st.warning(
+            "DCF is highly dependent on terminal value. Small changes in WACC or terminal growth can materially change the valuation."
+        )
 
         st.markdown("### Base Case Forecast")
 
