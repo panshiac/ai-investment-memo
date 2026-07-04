@@ -465,7 +465,7 @@ def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
         "rows": dcf_rows
     }
 
-def create_pdf(memo, company_name, financials):
+def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bull_dcf=None):
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer, pagesize=A4)
@@ -500,6 +500,31 @@ def create_pdf(memo, company_name, financials):
 
     story.append(Paragraph(f"{company_name.title()} Investment Memo", title_style))
     story.append(Spacer(1, 12))
+    if base_dcf:
+        story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
+
+        story.append(Paragraph(
+            f"Bear Case Intrinsic Value: ${bear_dcf['intrinsic_value_per_share']:.2f}",
+            body_style
+        ))
+        story.append(Paragraph(
+            f"Base Case Intrinsic Value: ${base_dcf['intrinsic_value_per_share']:.2f}",
+            body_style
+        ))
+        story.append(Paragraph(
+            f"Bull Case Intrinsic Value: ${bull_dcf['intrinsic_value_per_share']:.2f}",
+            body_style
+        ))
+        story.append(Paragraph(
+            f"Base Case Upside / Downside: {base_dcf['upside_downside']:.1f}%",
+            body_style
+        ))
+        story.append(Paragraph(
+            f"Terminal Value Share: {base_dcf['terminal_value_share']*100:.1f}% of enterprise value",
+            body_style
+        ))
+
+        story.append(Spacer(1, 12))
 
     story.append(Paragraph("Financial Overview", heading_style))
     story.append(Paragraph(f"Market Cap: {format_billions(financials.get('marketCap'))}", body_style))
@@ -847,8 +872,14 @@ if st.button("Generate Memo"):
     else:
         st.warning("DCF unavailable because some required financial data is missing.")
 
-    pdf_file = create_pdf(memo, company_name, financials)
-
+    pdf_file = create_pdf(
+        memo,
+        company_name,
+        financials,
+        bear_dcf,
+        base_dcf,
+        bull_dcf
+    )
     st.download_button(
         "Download Memo as PDF",
         data=pdf_file,
