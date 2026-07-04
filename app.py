@@ -78,6 +78,19 @@ div[data-testid="stSelectbox"] p {
     font-size: 16px;
 }
 
+/* Financial metrics */
+div[data-testid="stMetricLabel"] {
+    color: #cbd5e1 !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #ffffff !important;
+    font-size: 34px !important;
+    font-weight: 700 !important;
+}
+
 /* select box */
 .stSelectbox div {
     color: black !important;
