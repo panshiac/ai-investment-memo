@@ -291,7 +291,7 @@ def safe_margin(net_income, revenue):
 
 def get_stock_chart(ticker):
     stock = yf.Ticker(ticker)
-    hist = stock.history(period="1y")
+    hist = stock.history(period="10y")
     return hist
 
 if st.button("Generate Memo"):
@@ -451,7 +451,7 @@ if st.button("Generate Memo"):
     help=None
     )
 
-    st.subheader("📈 Stock Price (1Y)")
+    st.subheader("📈 Stock Price (10Y)")
 
     chart_data = get_stock_chart(ticker)
 
