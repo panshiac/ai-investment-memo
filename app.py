@@ -265,10 +265,6 @@ def get_financial_data(company):
             "pe_ratio": None,
             "debt": None,
             "error": str(e)
-        }    except Exception as e:
-        return {
-            "error": "Yahoo Finance rate limit",
-            "details": str(e)
         }
 
 def get_ticker(company_name):
