@@ -767,45 +767,44 @@ if st.button("Generate Memo"):
             ]
         })
 
-    assumption_df = pd.DataFrame({
-        "Scenario": ["Bear", "Base", "Bull"],
-        "Revenue Growth": [
-            f"{max(growth_assumption - 0.05, 0.01)*100:.1f}%",
-            f"{growth_assumption*100:.1f}%",
-            f"{(growth_assumption + 0.05)*100:.1f}%"
-        ],
-        "FCF Margin": [
-            f"{max(fcf_margin_assumption - 0.03, 0.03)*100:.1f}%",
-            f"{fcf_margin_assumption*100:.1f}%",
-            f"{(fcf_margin_assumption + 0.03)*100:.1f}%"
-        ],
-        "WACC": [
-            f"{(wacc_assumption + 0.01)*100:.1f}%",
-            f"{wacc_assumption*100:.1f}%",
-            f"{max(wacc_assumption - 0.01, 0.05)*100:.1f}%"
-        ],
-        "Terminal Growth": [
-            f"{terminal_growth_assumption*100:.1f}%",
-            f"{terminal_growth_assumption*100:.1f}%",
-            f"{terminal_growth_assumption*100:.1f}%"
-        ]
-    })
+            assumption_df = pd.DataFrame({
+            "Scenario": ["Bear", "Base", "Bull"],
+            "Revenue Growth": [
+                f"{max(growth_assumption - 0.05, 0.01)*100:.1f}%",
+                f"{growth_assumption*100:.1f}%",
+                f"{(growth_assumption + 0.05)*100:.1f}%"
+            ],
+            "FCF Margin": [
+                f"{max(fcf_margin_assumption - 0.03, 0.03)*100:.1f}%",
+                f"{fcf_margin_assumption*100:.1f}%",
+                f"{(fcf_margin_assumption + 0.03)*100:.1f}%"
+            ],
+            "WACC": [
+                f"{(wacc_assumption + 0.01)*100:.1f}%",
+                f"{wacc_assumption*100:.1f}%",
+                f"{max(wacc_assumption - 0.01, 0.05)*100:.1f}%"
+            ],
+            "Terminal Growth": [
+                f"{terminal_growth_assumption*100:.1f}%",
+                f"{terminal_growth_assumption*100:.1f}%",
+                f"{terminal_growth_assumption*100:.1f}%"
+            ]
+        })
 
-    st.markdown("### Scenario Assumptions")
-    st.table(assumption_df)
+        st.markdown("### Scenario Assumptions")
+        st.table(assumption_df)
 
-    st.markdown("### Scenario Valuation")
-
+        st.markdown("### Scenario Valuation")
         st.table(scenario_df)
 
-    st.caption(
-        f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value."
-    )
-
-    if base_dcf["terminal_value_share"] > 0.80:
-        st.warning(
-            "DCF is highly dependent on terminal value. Small changes in WACC or terminal growth can materially change the valuation."
+        st.caption(
+            f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value."
         )
+
+        if base_dcf["terminal_value_share"] > 0.80:
+            st.warning(
+                "DCF is highly dependent on terminal value. Small changes in WACC or terminal growth can materially change the valuation."
+            )
 
         st.markdown("### Base Case Forecast")
 
