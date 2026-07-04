@@ -767,7 +767,7 @@ if st.button("Generate Memo"):
             ]
         })
 
-            assumption_df = pd.DataFrame({
+        assumption_df = pd.DataFrame({
             "Scenario": ["Bear", "Base", "Bull"],
             "Revenue Growth": [
                 f"{max(growth_assumption - 0.05, 0.01)*100:.1f}%",
