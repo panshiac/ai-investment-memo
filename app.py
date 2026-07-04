@@ -319,7 +319,9 @@ if st.button("Generate Memo"):
     - Every section must contain analytical judgment, not description.
     - Avoid generic phrases such as "strong brand", "competitive industry", or "future growth potential" unless supported by data.
     - Focus on valuation, earnings quality, balance sheet risk, expectations, and downside risk.
-
+    - When mentioning Market Cap, Revenue, Net Income, Debt, or Price, copy the value exactly from FINANCIAL DATA including the $ symbol and B suffix.
+    - Do NOT write financial values like 253.49B. You must write them as $253.49B.
+    - All monetary values must include a $ symbol.
     Use EXACTLY these sections:
 
     ## EXECUTIVE SUMMARY
@@ -420,6 +422,8 @@ if st.button("Generate Memo"):
     - Do NOT use italics.
     - Do NOT use asterisks.
     - Use normal paragraphs with spaces between words.
+    - Do not use superscript, subscript, small text, or HTML formatting.
+    - Do not use inline markdown formatting inside paragraphs.
     """
 
     with st.spinner("Generating memo..."):
@@ -435,7 +439,6 @@ if st.button("Generate Memo"):
 
     memo = memo.replace("***", "")
     memo = memo.replace("**", "")
-    memo = memo.replace("*", "")
 
     st.markdown(
     memo,
