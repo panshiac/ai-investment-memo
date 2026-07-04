@@ -137,11 +137,14 @@ strong {
 
 /* Financial metrics */
 div[data-testid="stMetricLabel"],
+div[data-testid="stMetricLabel"] *,
+div[data-testid="stMetricLabel"] p,
 div[data-testid="stMetricLabel"] label,
-div[data-testid="stMetricLabel"] p {
-    color: white !important;
+div[data-testid="stMetricLabel"] span {
+    color: #ffffff !important;
+    opacity: 1 !important;
     font-size: 18px !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important;
 }
 
 div[data-testid="stMetricValue"],
