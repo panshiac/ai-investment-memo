@@ -89,10 +89,10 @@ div[data-testid="stSelectbox"] p {
     color: #f8fafc !important;
 }
 
-/* button */
+/* Generate Memo button */
 .stButton>button {
-    background-color: #38bdf8;
-    color: white;
+    background-color: #38bdf8 !important;
+    color: white !important;
     border-radius: 10px;
     height: 3em;
     width: 100%;
@@ -101,7 +101,22 @@ div[data-testid="stSelectbox"] p {
 }
 
 .stButton>button:hover {
-    background-color: #0ea5e9;
+    background-color: #0ea5e9 !important;
+}
+
+/* Download PDF button */
+.stDownloadButton>button {
+    background-color: #38bdf8 !important;
+    color: white !important;
+    border-radius: 10px;
+    height: 3em;
+    width: 100%;
+    font-size: 18px;
+    border: none;
+}
+
+.stDownloadButton>button:hover {
+    background-color: #0ea5e9 !important;
 }
 
 code {
