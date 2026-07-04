@@ -591,7 +591,7 @@ if st.button("Generate Memo"):
 
     DCF VALUATION:
     {f'''
-    Base Growth Assumption: {dcf["base_growth"] * 100:.1f}%
+    Revenue Growth Assumption: {dcf["growth"] * 100:.1f}%
     WACC: {dcf["wacc"] * 100:.1f}%
     Terminal Growth: {dcf["terminal_growth"] * 100:.1f}%
     Intrinsic Value Per Share: ${dcf["intrinsic_value_per_share"]:.2f}
@@ -687,7 +687,7 @@ if st.button("Generate Memo"):
         )
 
         st.caption(
-            f"Assumptions: Base growth {dcf['base_growth']*100:.1f}%, "
+            f"Assumptions: Revenue growth {dcf['growth']*100:.1f}%, "
             f"WACC {dcf['wacc']*100:.1f}%, "
             f"Terminal growth {dcf['terminal_growth']*100:.1f}%."
         )
