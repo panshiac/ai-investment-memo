@@ -624,6 +624,9 @@ if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
     financials = get_financial_data(ticker)
+
+    st.write("Ticker:", ticker)
+    st.write("Financials:", financials)
     bear_dcf = calculate_dcf(
         financials,
         max(growth_assumption - 0.05, 0.01),
