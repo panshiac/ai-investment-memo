@@ -354,22 +354,22 @@ def get_financial_data(company):
     except Exception as e:
         st.error(f"Yahoo Finance Error: {e}")
 
-    return {
-        "marketCap": None,
-        "lastPrice": None,
-        "sector": "N/A",
-        "revenue": None,
-        "netIncome": None,
-        "pe_ratio": None,
-        "debt": None,
-        "cash": None,
-        "operatingCashFlow": None,
-        "capitalExpenditure": None,
-        "freeCashFlow": None,
-        "sharesOutstanding": None,
-        "dataSource": "Unavailable",
-        "error": str(e)
-    }
+        return {
+            "marketCap": None,
+            "lastPrice": None,
+            "sector": "N/A",
+            "revenue": None,
+            "netIncome": None,
+            "pe_ratio": None,
+            "debt": None,
+            "cash": None,
+            "operatingCashFlow": None,
+            "capitalExpenditure": None,
+            "freeCashFlow": None,
+            "sharesOutstanding": None,
+            "dataSource": "Unavailable",
+            "error": str(e)
+        }
 
 @st.cache_data(ttl=3600)
 def get_ticker(company_name):
