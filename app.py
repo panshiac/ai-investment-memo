@@ -6,6 +6,7 @@ from pypdf import PdfReader
 import yfinance as yf
 from yahooquery import search
 import pandas as pd
+import requests
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
@@ -287,6 +288,79 @@ def extract_pdf_text(file):
 
     return text
 
+def get_fmp_financial_data(ticker):
+    try:
+        api_key = st.secrets["FMP_API_KEY"]
+        base_url = "https://financialmodelingprep.com/api/v3"
+
+        profile_url = f"{base_url}/profile/{ticker}?apikey={api_key}"
+        income_url = f"{base_url}/income-statement/{ticker}?limit=1&apikey={api_key}"
+        balance_url = f"{base_url}/balance-sheet-statement/{ticker}?limit=1&apikey={api_key}"
+        cashflow_url = f"{base_url}/cash-flow-statement/{ticker}?limit=1&apikey={api_key}"
+        quote_url = f"{base_url}/quote/{ticker}?apikey={api_key}"
+
+        profile = requests.get(profile_url, timeout=10).json()
+        income = requests.get(income_url, timeout=10).json()
+        balance = requests.get(balance_url, timeout=10).json()
+        cashflow = requests.get(cashflow_url, timeout=10).json()
+        quote = requests.get(quote_url, timeout=10).json()
+
+        profile = profile[0] if isinstance(profile, list) and len(profile) > 0 else {}
+        income = income[0] if isinstance(income, list) and len(income) > 0 else {}
+        balance = balance[0] if isinstance(balance, list) and len(balance) > 0 else {}
+        cashflow = cashflow[0] if isinstance(cashflow, list) and len(cashflow) > 0 else {}
+        quote = quote[0] if isinstance(quote, list) and len(quote) > 0 else {}
+
+        revenue = income.get("revenue")
+        net_income = income.get("netIncome")
+        debt = balance.get("totalDebt")
+        cash = balance.get("cashAndCashEquivalents")
+        operating_cash_flow = cashflow.get("operatingCashFlow")
+        capex = cashflow.get("capitalExpenditure")
+        free_cash_flow = cashflow.get("freeCashFlow")
+
+        market_cap = profile.get("mktCap") or quote.get("marketCap")
+        last_price = profile.get("price") or quote.get("price")
+        shares_outstanding = quote.get("sharesOutstanding")
+
+        if shares_outstanding is None and market_cap and last_price:
+            shares_outstanding = market_cap / last_price
+
+        return {
+            "marketCap": market_cap,
+            "lastPrice": last_price,
+            "sector": profile.get("sector", "N/A"),
+            "revenue": revenue,
+            "netIncome": net_income,
+            "pe_ratio": quote.get("pe"),
+            "debt": debt,
+            "cash": cash,
+            "operatingCashFlow": operating_cash_flow,
+            "capitalExpenditure": capex,
+            "freeCashFlow": free_cash_flow,
+            "sharesOutstanding": shares_outstanding,
+            "dataSource": "FMP"
+        }
+
+    except Exception as e:
+        st.error(f"FMP Error: {e}")
+        return {
+            "marketCap": None,
+            "lastPrice": None,
+            "sector": "N/A",
+            "revenue": None,
+            "netIncome": None,
+            "pe_ratio": None,
+            "debt": None,
+            "cash": None,
+            "operatingCashFlow": None,
+            "capitalExpenditure": None,
+            "freeCashFlow": None,
+            "sharesOutstanding": None,
+            "dataSource": "Unavailable",
+            "error": str(e)
+        }
+
 def get_financial_data(company):
     try:
         stock = yf.Ticker(company)
@@ -330,22 +404,14 @@ def get_financial_data(company):
                 last_price = None
 
         shares_outstanding = info.get("sharesOutstanding")
+
         if shares_outstanding is None and market_cap and last_price:
             shares_outstanding = market_cap / last_price
+        required_values = [revenue, market_cap, last_price, shares_outstanding]
 
-        st.write("### Yahoo Debug")
-        st.write("Ticker:", company)
-        st.write("Info keys count:", len(info.keys()))
-        st.write("Market Cap:", market_cap)
-        st.write("Price:", last_price)
-        st.write("Revenue:", revenue)
-        st.write("Net Income:", net_income)
-        st.write("Debt:", debt)
-        st.write("Cash:", cash)
-        st.write("Operating Cash Flow:", operating_cash_flow)
-        st.write("CapEx:", capex)
-        st.write("Free Cash Flow:", free_cash_flow)
-        st.write("Shares Outstanding:", shares_outstanding)
+        if any(value is None or value == 0 for value in required_values):
+            st.warning("Yahoo Finance returned incomplete data. Switching to FMP backup.")
+            return get_fmp_financial_data(company)
 
         return {
             "marketCap": market_cap,
@@ -360,25 +426,12 @@ def get_financial_data(company):
             "capitalExpenditure": capex,
             "freeCashFlow": free_cash_flow,
             "sharesOutstanding": shares_outstanding,
+            "dataSource": "Yahoo Finance",
         }
 
     except Exception as e:
-        st.error(f"Yahoo Error: {e}")
-        return {
-            "marketCap": None,
-            "lastPrice": None,
-            "sector": "N/A",
-            "revenue": None,
-            "netIncome": None,
-            "pe_ratio": None,
-            "debt": None,
-            "cash": None,
-            "operatingCashFlow": None,
-            "capitalExpenditure": None,
-            "freeCashFlow": None,
-            "sharesOutstanding": None,
-            "error": str(e)
-        }
+        st.warning(f"Yahoo Finance failed: {e}. Switching to FMP backup.")
+        return get_fmp_financial_data(company)
 
 def get_ticker(company_name):
     try:
@@ -798,8 +851,9 @@ if st.button("Generate Memo"):
     col5.metric("Net Income", format_billions(financials.get("netIncome")))
     col6.metric("Debt", format_billions(financials.get("debt")))
 
-    st.caption(f"Sector: {financials.get('sector', 'N/A')}")
-
+    st.caption(
+        f"Sector: {financials.get('sector', 'N/A')} | Data Source: {financials.get('dataSource', 'N/A')}"
+    )
     st.subheader("📐 5-Year DCF Scenario Analysis")
 
     if base_dcf:
