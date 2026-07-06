@@ -465,6 +465,36 @@ def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
         "rows": dcf_rows
     }
 
+def calculate_dcf_sensitivity(financials, growth, fcf_margin):
+    wacc_range = [0.07, 0.08, 0.09, 0.10, 0.11]
+    terminal_growth_range = [0.01, 0.02, 0.025, 0.03, 0.04]
+
+    sensitivity_rows = []
+
+    for wacc in wacc_range:
+        row = {"WACC": f"{wacc * 100:.1f}%"}
+
+        for terminal_growth in terminal_growth_range:
+            if wacc <= terminal_growth:
+                row[f"{terminal_growth * 100:.1f}%"] = "N/A"
+            else:
+                dcf_result = calculate_dcf(
+                    financials,
+                    growth,
+                    fcf_margin,
+                    wacc,
+                    terminal_growth
+                )
+
+                if dcf_result:
+                    row[f"{terminal_growth * 100:.1f}%"] = f"${dcf_result['intrinsic_value_per_share']:.2f}"
+                else:
+                    row[f"{terminal_growth * 100:.1f}%"] = "N/A"
+
+        sensitivity_rows.append(row)
+
+    return pd.DataFrame(sensitivity_rows)
+
 def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bull_dcf=None):
     buffer = BytesIO()
 
@@ -868,6 +898,18 @@ if st.button("Generate Memo"):
         dcf_table["PV of FCF"] = dcf_table["PV of FCF"].apply(format_billions)
 
         st.table(dcf_table)
+
+        st.markdown("### DCF Sensitivity Analysis")
+
+        sensitivity_df = calculate_dcf_sensitivity(
+            financials,
+            growth_assumption,
+            fcf_margin_assumption
+        )
+
+        st.caption("Intrinsic value per share under different WACC and terminal growth assumptions.")
+
+        st.table(sensitivity_df)
 
     else:
         st.warning("DCF unavailable because some required financial data is missing.")
