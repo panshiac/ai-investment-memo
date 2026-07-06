@@ -411,7 +411,8 @@ def get_financial_data(company):
 
         if any(value is None or value == 0 for value in required_values):
             st.warning("Yahoo Finance returned incomplete data. Switching to FMP backup.")
-            return get_fmp_financial_data(company)
+            ticker_symbol = get_ticker(company)
+            return get_fmp_financial_data(ticker_symbol)
 
         return {
             "marketCap": market_cap,
@@ -431,7 +432,8 @@ def get_financial_data(company):
 
     except Exception as e:
         st.warning(f"Yahoo Finance failed: {e}. Switching to FMP backup.")
-        return get_fmp_financial_data(company)
+        ticker_symbol = get_ticker(company)
+        return get_fmp_financial_data(ticker_symbol)
 
 def get_ticker(company_name):
     try:
