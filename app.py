@@ -654,6 +654,21 @@ if st.button("Generate Memo"):
 
     if uploaded_file is not None:
         document_text = extract_pdf_text(uploaded_file)
+    if bear_dcf and base_dcf and bull_dcf:
+        dcf_text = f"""
+    Bear Case Intrinsic Value: ${bear_dcf['intrinsic_value_per_share']:.2f}
+    
+    Base Case Intrinsic Value: ${base_dcf['intrinsic_value_per_share']:.2f}
+    
+    Bull Case Intrinsic Value: ${bull_dcf['intrinsic_value_per_share']:.2f}
+
+    Base Case Upside/Downside: {base_dcf['upside_downside']:.1f}%
+    """
+    else:
+        dcf_text = """
+    DCF analysis could not be completed because some required financial inputs were unavailable.
+    Use the available financial data only.
+    """
 
     prompt = f"""
     You are a senior buy-side equity analyst writing for a portfolio manager.
@@ -758,17 +773,8 @@ if st.button("Generate Memo"):
 
     DCF SCENARIOS:
 
-    Bear Case Intrinsic Value:
-    ${bear_dcf['intrinsic_value_per_share']:.2f}
-    
-    Base Case Intrinsic Value:
-    ${base_dcf['intrinsic_value_per_share']:.2f}
-    
-    Bull Case Intrinsic Value:
-    ${bull_dcf['intrinsic_value_per_share']:.2f}
-    
-    Base Case Upside/Downside:
-    {base_dcf['upside_downside']:.1f}%
+    DCF SCENARIOS:
+    {dcf_text}
 
     Bear Case Assumptions:
     Revenue Growth: {max(growth_assumption - 0.05, 0.01)*100:.1f}%
