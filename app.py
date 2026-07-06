@@ -304,6 +304,11 @@ def get_fmp_financial_data(ticker):
         balance = requests.get(balance_url, timeout=10).json()
         cashflow = requests.get(cashflow_url, timeout=10).json()
         quote = requests.get(quote_url, timeout=10).json()
+        st.write("FMP Profile:", profile)
+        st.write("FMP Income:", income)
+        st.write("FMP Balance:", balance)
+        st.write("FMP Cashflow:", cashflow)
+        st.write("FMP Quote:", quote)
 
         profile = profile[0] if isinstance(profile, list) and len(profile) > 0 else {}
         income = income[0] if isinstance(income, list) and len(income) > 0 else {}
