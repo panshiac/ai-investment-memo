@@ -330,22 +330,22 @@ def get_financial_data(company):
                 last_price = None
 
         shares_outstanding = info.get("sharesOutstanding")
-	if shares_outstanding is None and market_cap and last_price:
-	    shares_outstanding = market_cap / last_price
+        if shares_outstanding is None and market_cap and last_price:
+            shares_outstanding = market_cap / last_price
 
-	st.write("### Yahoo Debug")
-	st.write("Ticker:", company)
-	st.write("Info keys count:", len(info.keys()))
-	st.write("Market Cap:", market_cap)
-	st.write("Price:", last_price)
-	st.write("Revenue:", revenue)
-	st.write("Net Income:", net_income)
-	st.write("Debt:", debt)
-	st.write("Cash:", cash)
-	st.write("Operating Cash Flow:", operating_cash_flow)
-	st.write("CapEx:", capex)
-	st.write("Free Cash Flow:", free_cash_flow)
-	st.write("Shares Outstanding:", shares_outstanding)
+        st.write("### Yahoo Debug")
+        st.write("Ticker:", company)
+        st.write("Info keys count:", len(info.keys()))
+        st.write("Market Cap:", market_cap)
+        st.write("Price:", last_price)
+        st.write("Revenue:", revenue)
+        st.write("Net Income:", net_income)
+        st.write("Debt:", debt)
+        st.write("Cash:", cash)
+        st.write("Operating Cash Flow:", operating_cash_flow)
+        st.write("CapEx:", capex)
+        st.write("Free Cash Flow:", free_cash_flow)
+        st.write("Shares Outstanding:", shares_outstanding)
 
         return {
             "marketCap": market_cap,
@@ -363,7 +363,7 @@ def get_financial_data(company):
         }
 
     except Exception as e:
-	st.error(f"Yahoo Error: {e}")
+        st.error(f"Yahoo Error: {e}")
         return {
             "marketCap": None,
             "lastPrice": None,
