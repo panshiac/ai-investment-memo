@@ -14,7 +14,8 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
-    Image
+    Image,
+    PageBreak
 )
 import matplotlib.pyplot as plt
 
@@ -701,6 +702,50 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         story.append(score_table)
         story.append(Spacer(1, 20))
 
+        radar_buffer = BytesIO()
+
+        categories = [
+            "Valuation",
+            "Profitability",
+            "Balance Sheet",
+            "Cash Flow",
+            "DCF"
+        ]
+
+        scores = [
+            scorecard["valuation"],
+            scorecard["profitability"],
+            scorecard["balance_sheet"],
+            scorecard["cash_flow"],
+            scorecard["dcf"]
+        ]
+
+        angles = [n / float(len(categories)) * 2 * 3.14159 for n in range(len(categories))]
+        scores += scores[:1]
+        angles += angles[:1]
+
+        plt.figure(figsize=(4.8, 4.8))
+        ax = plt.subplot(111, polar=True)
+
+        ax.plot(angles, scores, linewidth=2)
+        ax.fill(angles, scores, alpha=0.25)
+
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(categories)
+
+        ax.set_yticks([20, 40, 60, 80, 100])
+        ax.set_ylim(0, 100)
+
+        plt.title("Investment Score Radar")
+        plt.tight_layout()
+        plt.savefig(radar_buffer, format="png", dpi=200)
+        plt.close()
+
+        radar_buffer.seek(0)
+
+        story.append(Image(radar_buffer, width=330, height=330))
+        story.append(PageBreak())
+
     story.append(Paragraph("Financial Overview", heading_style))
 
     financial_table = [
@@ -852,7 +897,7 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         ]))
 
         story.append(forecast)
-        story.append(Spacer(1, 20))
+        story.append(PageBreak())
 
     for line in memo.split("\n"):
         line = line.strip()
