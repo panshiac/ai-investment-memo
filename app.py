@@ -631,88 +631,75 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
     story = []
 
     from datetime import datetime
-
     today = datetime.today().strftime("%d %B %Y")
 
     story.append(Paragraph("MEMOGEN", title_style))
-
-    story.append(Paragraph(
-        "<font size=16><b>AI Investment Research Report</b></font>",
-        styles["Heading2"]
-    ))
-
+    story.append(Paragraph("<font size=16><b>AI Investment Research Report</b></font>", styles["Heading2"]))
     story.append(Spacer(1, 8))
-
-    story.append(Paragraph(
-        f"<font size=20><b>{company_name.upper()}</b></font>",
-        styles["Heading1"]
-    ))
-
+    story.append(Paragraph(f"<font size=20><b>{company_name.upper()}</b></font>", styles["Heading1"]))
     story.append(Spacer(1, 12))
-    
-    story.append(Paragraph(
-        f"<b>Prepared:</b> {today}",
-        body_style
-    ))
-
+    story.append(Paragraph(f"<b>Prepared:</b> {today}", body_style))
     story.append(Spacer(1, 18))
 
     if base_dcf:
-
         scorecard = calculate_investment_score(financials, base_dcf)
 
-        story.append(Paragraph(
-            "<b>Executive Snapshot</b>",
-            heading_style
-        ))
-
-        story.append(Paragraph(
-            f"<b>Recommendation:</b> {scorecard['rating']}",
-            body_style
-        ))
-
-        story.append(Paragraph(
-            f"<b>Investment Score:</b> {scorecard['overall']} / 100",
-            body_style
-        ))
-
-        story.append(Paragraph(
-            f"<b>Current Price:</b> ${base_dcf['current_price']:.2f}",
-            body_style
-        ))
-
-        story.append(Paragraph(
-            f"<b>Intrinsic Value:</b> ${base_dcf['intrinsic_value_per_share']:.2f}",
-            body_style
-        ))
-
-        story.append(Paragraph(
-            f"<b>Upside / Downside:</b> {base_dcf['upside_downside']:.1f}%",
-            body_style
-        ))
-
+        story.append(Paragraph("Executive Snapshot", heading_style))
+        story.append(Paragraph(f"<b>Recommendation:</b> {scorecard['rating']}", body_style))
+        story.append(Paragraph(f"<b>Investment Score:</b> {scorecard['overall']} / 100", body_style))
+        story.append(Paragraph(f"<b>Current Price:</b> ${base_dcf['current_price']:.2f}", body_style))
+        story.append(Paragraph(f"<b>Intrinsic Value:</b> ${base_dcf['intrinsic_value_per_share']:.2f}", body_style))
+        story.append(Paragraph(f"<b>Upside / Downside:</b> {base_dcf['upside_downside']:.1f}%", body_style))
         story.append(Spacer(1, 20))
+
+    story.append(Paragraph("Financial Overview", heading_style))
+
+    financial_table = [
+        ["Metric", "Value"],
+        ["Sector", financials.get("sector", "N/A")],
+        ["Market Cap", format_billions(financials.get("marketCap"))],
+        ["Revenue", format_billions(financials.get("revenue"))],
+        ["Net Income", format_billions(financials.get("netIncome"))],
+        ["Debt", format_billions(financials.get("debt"))],
+        [
+            "P/E Ratio",
+            str(round(financials.get("pe_ratio"), 2))
+            if isinstance(financials.get("pe_ratio"), (int, float))
+            else "N/A"
+        ],
+        [
+            "Net Margin",
+            safe_margin(financials.get("netIncome"), financials.get("revenue"))
+        ]
+    ]
+
+    table = Table(financial_table, colWidths=[170, 220])
+
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 11),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+        ("FONTSIZE", (0, 1), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE")
+    ]))
+
+    story.append(table)
+    story.append(Spacer(1, 20))
 
     if bear_dcf and base_dcf and bull_dcf:
         story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
-    
+
         dcf_summary_table = [
             ["Scenario", "Intrinsic Value", "Upside / Downside"],
-            [
-                "Bear",
-                f"${bear_dcf['intrinsic_value_per_share']:.2f}",
-                f"{bear_dcf['upside_downside']:.1f}%"
-            ],
-            [
-                "Base",
-                f"${base_dcf['intrinsic_value_per_share']:.2f}",
-                f"{base_dcf['upside_downside']:.1f}%"
-            ],
-            [
-                "Bull",
-                f"${bull_dcf['intrinsic_value_per_share']:.2f}",
-                f"{bull_dcf['upside_downside']:.1f}%"
-            ]
+            ["Bear", f"${bear_dcf['intrinsic_value_per_share']:.2f}", f"{bear_dcf['upside_downside']:.1f}%"],
+            ["Base", f"${base_dcf['intrinsic_value_per_share']:.2f}", f"{base_dcf['upside_downside']:.1f}%"],
+            ["Bull", f"${bull_dcf['intrinsic_value_per_share']:.2f}", f"{bull_dcf['upside_downside']:.1f}%"]
         ]
 
         dcf_table = Table(dcf_summary_table, colWidths=[120, 160, 160])
@@ -727,7 +714,7 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
             ("FONTSIZE", (0, 1), (-1, -1), 10),
             ("TOPPADDING", (0, 0), (-1, -1), 8),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE")
         ]))
 
         story.append(dcf_table)
@@ -739,58 +726,6 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         ))
 
         story.append(Spacer(1, 20))
-
-    story.append(Paragraph("Financial Overview", heading_style))
-
-financial_table = [
-    ["Metric", "Value"],
-    ["Sector", financials.get("sector", "N/A")],
-    ["Market Cap", format_billions(financials.get("marketCap"))],
-    ["Revenue", format_billions(financials.get("revenue"))],
-    ["Net Income", format_billions(financials.get("netIncome"))],
-    ["Debt", format_billions(financials.get("debt"))],
-    ["P/E Ratio",
-     str(round(financials.get("pe_ratio"),2))
-     if isinstance(financials.get("pe_ratio"), (int,float))
-     else "N/A"],
-    ["Net Margin",
-     safe_margin(
-         financials.get("netIncome"),
-         financials.get("revenue")
-     )]
-]
-
-table = Table(financial_table, colWidths=[170,220])
-
-table.setStyle(TableStyle([
-
-    ("BACKGROUND",(0,0),(-1,0),colors.HexColor("#1e3a8a")),
-    ("TEXTCOLOR",(0,0),(-1,0),colors.white),
-
-    ("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
-    ("FONTSIZE",(0,0),(-1,0),11),
-
-    ("BOTTOMPADDING",(0,0),(-1,0),10),
-
-    ("GRID",(0,0),(-1,-1),0.5,colors.grey),
-
-    ("BACKGROUND",(0,1),(-1,-1),colors.whitesmoke),
-
-    ("FONTNAME",(0,1),(-1,-1),"Helvetica"),
-
-    ("FONTSIZE",(0,1),(-1,-1),10),
-
-    ("BOTTOMPADDING",(0,1),(-1,-1),8),
-
-    ("TOPPADDING",(0,1),(-1,-1),8),
-
-    ("VALIGN",(0,0),(-1,-1),"MIDDLE")
-
-]))
-
-story.append(table)
-
-story.append(Spacer(1,20))
 
     for line in memo.split("\n"):
         line = line.strip()
@@ -807,7 +742,6 @@ story.append(Spacer(1,20))
     doc.build(story)
     buffer.seek(0)
     return buffer
-
 if st.button("Generate Memo"):
 
     ticker = get_ticker(company_name)
