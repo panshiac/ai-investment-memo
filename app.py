@@ -8,8 +8,13 @@ from yahooquery import search
 import pandas as pd
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
 load_dotenv()
@@ -684,39 +689,105 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         ))
 
         story.append(Spacer(1, 20))
-    if base_dcf:
-        story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
 
-        story.append(Paragraph(
-            f"Bear Case Intrinsic Value: ${bear_dcf['intrinsic_value_per_share']:.2f}",
-            body_style
-        ))
-        story.append(Paragraph(
-            f"Base Case Intrinsic Value: ${base_dcf['intrinsic_value_per_share']:.2f}",
-            body_style
-        ))
-        story.append(Paragraph(
-            f"Bull Case Intrinsic Value: ${bull_dcf['intrinsic_value_per_share']:.2f}",
-            body_style
-        ))
-        story.append(Paragraph(
-            f"Base Case Upside / Downside: {base_dcf['upside_downside']:.1f}%",
-            body_style
-        ))
-        story.append(Paragraph(
-            f"Terminal Value Share: {base_dcf['terminal_value_share']*100:.1f}% of enterprise value",
-            body_style
-        ))
+    if bear_dcf and base_dcf and bull_dcf:
+    story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
 
-        story.append(Spacer(1, 12))
+    dcf_summary_table = [
+        ["Scenario", "Intrinsic Value", "Upside / Downside"],
+        [
+            "Bear",
+            f"${bear_dcf['intrinsic_value_per_share']:.2f}",
+            f"{bear_dcf['upside_downside']:.1f}%"
+        ],
+        [
+            "Base",
+            f"${base_dcf['intrinsic_value_per_share']:.2f}",
+            f"{base_dcf['upside_downside']:.1f}%"
+        ],
+        [
+            "Bull",
+            f"${bull_dcf['intrinsic_value_per_share']:.2f}",
+            f"{bull_dcf['upside_downside']:.1f}%"
+        ]
+    ]
+
+    dcf_table = Table(dcf_summary_table, colWidths=[120, 160, 160])
+
+    dcf_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 11),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+        ("FONTSIZE", (0, 1), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+
+    story.append(dcf_table)
+    story.append(Spacer(1, 8))
+
+    story.append(Paragraph(
+        f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value.",
+        body_style
+    ))
+
+    story.append(Spacer(1, 20))
 
     story.append(Paragraph("Financial Overview", heading_style))
-    story.append(Paragraph(f"Market Cap: {format_billions(financials.get('marketCap'))}", body_style))
-    story.append(Paragraph(f"Revenue: {format_billions(financials.get('revenue'))}", body_style))
-    story.append(Paragraph(f"Net Income: {format_billions(financials.get('netIncome'))}", body_style))
-    story.append(Paragraph(f"Debt: {format_billions(financials.get('debt'))}", body_style))
-    story.append(Paragraph(f"Sector: {financials.get('sector', 'N/A')}", body_style))
-    story.append(Spacer(1, 12))
+
+financial_table = [
+    ["Metric", "Value"],
+    ["Sector", financials.get("sector", "N/A")],
+    ["Market Cap", format_billions(financials.get("marketCap"))],
+    ["Revenue", format_billions(financials.get("revenue"))],
+    ["Net Income", format_billions(financials.get("netIncome"))],
+    ["Debt", format_billions(financials.get("debt"))],
+    ["P/E Ratio",
+     str(round(financials.get("pe_ratio"),2))
+     if isinstance(financials.get("pe_ratio"), (int,float))
+     else "N/A"],
+    ["Net Margin",
+     safe_margin(
+         financials.get("netIncome"),
+         financials.get("revenue")
+     )]
+]
+
+table = Table(financial_table, colWidths=[170,220])
+
+table.setStyle(TableStyle([
+
+    ("BACKGROUND",(0,0),(-1,0),colors.HexColor("#1e3a8a")),
+    ("TEXTCOLOR",(0,0),(-1,0),colors.white),
+
+    ("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),
+    ("FONTSIZE",(0,0),(-1,0),11),
+
+    ("BOTTOMPADDING",(0,0),(-1,0),10),
+
+    ("GRID",(0,0),(-1,-1),0.5,colors.grey),
+
+    ("BACKGROUND",(0,1),(-1,-1),colors.whitesmoke),
+
+    ("FONTNAME",(0,1),(-1,-1),"Helvetica"),
+
+    ("FONTSIZE",(0,1),(-1,-1),10),
+
+    ("BOTTOMPADDING",(0,1),(-1,-1),8),
+
+    ("TOPPADDING",(0,1),(-1,-1),8),
+
+    ("VALIGN",(0,0),(-1,-1),"MIDDLE")
+
+]))
+
+story.append(table)
+
+story.append(Spacer(1,20))
 
     for line in memo.split("\n"):
         line = line.strip()
