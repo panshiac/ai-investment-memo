@@ -788,11 +788,70 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         story.append(dcf_table)
         story.append(Spacer(1, 8))
 
+        dcf_chart_buffer = BytesIO()
+
+        scenarios = ["Bear", "Base", "Bull"]
+        values = [
+            bear_dcf["intrinsic_value_per_share"],
+            base_dcf["intrinsic_value_per_share"],
+            bull_dcf["intrinsic_value_per_share"]
+        ]
+
+        plt.figure(figsize=(6, 3))
+        plt.bar(scenarios, values)
+        plt.title("DCF Intrinsic Value by Scenario")
+        plt.ylabel("Intrinsic Value per Share")
+        plt.tight_layout()
+        plt.savefig(dcf_chart_buffer, format="png", dpi=200)
+        plt.close()
+
+        dcf_chart_buffer.seek(0)
+
+        story.append(Image(dcf_chart_buffer, width=420, height=210))
+        story.append(Spacer(1, 16))
+
         story.append(Paragraph(
             f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value.",
             body_style
         ))
+ 
+        story.append(Spacer(1, 12))
 
+        story.append(Paragraph("Base Case 5-Year Forecast", heading_style))
+
+        forecast_table = [
+            ["Year", "Growth", "Revenue", "FCF Margin", "FCF", "PV of FCF"]
+        ]
+
+        for row in base_dcf["rows"]:
+            forecast_table.append([
+                str(row["Year"]),
+                row["Revenue Growth"],
+                format_billions(row["Projected Revenue"]),
+                row["FCF Margin"],
+                format_billions(row["Projected FCF"]),
+                format_billions(row["PV of FCF"])
+            ])
+
+        forecast = Table(
+            forecast_table,
+            colWidths=[45, 70, 90, 75, 90, 90]
+        )
+
+        forecast.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 8),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+            ("FONTSIZE", (0, 1), (-1, -1), 7),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ]))
+
+        story.append(forecast)
         story.append(Spacer(1, 20))
 
     for line in memo.split("\n"):
@@ -1193,7 +1252,8 @@ if st.button("Generate Memo"):
         financials,
         bear_dcf,
         base_dcf,
-        bull_dcf
+        bull_dcf,
+        chart_data
     )
     st.download_button(
         "Download Memo as PDF",
