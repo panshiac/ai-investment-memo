@@ -14,7 +14,9 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle
-)from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+)
+
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
 load_dotenv()
