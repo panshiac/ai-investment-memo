@@ -473,6 +473,123 @@ def calculate_dcf(financials, growth, fcf_margin, wacc, terminal_growth):
         "rows": dcf_rows
     }
 
+def calculate_investment_score(financials, base_dcf):
+    revenue = financials.get("revenue")
+    net_income = financials.get("netIncome")
+    debt = financials.get("debt") or 0
+    pe_ratio = financials.get("pe_ratio")
+    free_cash_flow = financials.get("freeCashFlow")
+
+    # Valuation score
+    if isinstance(pe_ratio, (int, float)):
+        if pe_ratio < 15:
+            valuation_score = 95
+        elif pe_ratio < 25:
+            valuation_score = 80
+        elif pe_ratio < 35:
+            valuation_score = 65
+        elif pe_ratio < 50:
+            valuation_score = 45
+        else:
+            valuation_score = 25
+    else:
+        valuation_score = 50
+
+    # Profitability score
+    if revenue and net_income is not None:
+        net_margin = net_income / revenue
+        if net_margin > 0.20:
+            profitability_score = 95
+        elif net_margin > 0.10:
+            profitability_score = 80
+        elif net_margin > 0.05:
+            profitability_score = 60
+        elif net_margin > 0:
+            profitability_score = 40
+        else:
+            profitability_score = 15
+    else:
+        profitability_score = 50
+
+    # Balance sheet score
+    if revenue and revenue != 0:
+        debt_to_revenue = debt / revenue
+        if debt_to_revenue < 0.10:
+            balance_sheet_score = 95
+        elif debt_to_revenue < 0.30:
+            balance_sheet_score = 80
+        elif debt_to_revenue < 0.60:
+            balance_sheet_score = 60
+        elif debt_to_revenue < 1.00:
+            balance_sheet_score = 40
+        else:
+            balance_sheet_score = 20
+    else:
+        balance_sheet_score = 50
+
+    # Cash flow quality score
+    if revenue and free_cash_flow is not None:
+        fcf_margin = free_cash_flow / revenue
+        if fcf_margin > 0.20:
+            cash_flow_score = 95
+        elif fcf_margin > 0.10:
+            cash_flow_score = 80
+        elif fcf_margin > 0.05:
+            cash_flow_score = 60
+        elif fcf_margin > 0:
+            cash_flow_score = 40
+        else:
+            cash_flow_score = 15
+    else:
+        cash_flow_score = 50
+
+    # DCF score
+    if base_dcf:
+        upside = base_dcf.get("upside_downside", 0)
+        if upside > 40:
+            dcf_score = 95
+        elif upside > 20:
+            dcf_score = 80
+        elif upside > 0:
+            dcf_score = 65
+        elif upside > -20:
+            dcf_score = 45
+        elif upside > -40:
+            dcf_score = 30
+        else:
+            dcf_score = 15
+    else:
+        dcf_score = 50
+
+    overall_score = (
+        valuation_score * 0.25 +
+        profitability_score * 0.25 +
+        balance_sheet_score * 0.20 +
+        cash_flow_score * 0.15 +
+        dcf_score * 0.15
+    )
+
+    if overall_score >= 85:
+        rating = "Strong Buy"
+    elif overall_score >= 70:
+        rating = "Buy"
+    elif overall_score >= 55:
+        rating = "Hold"
+    elif overall_score >= 40:
+        rating = "Sell"
+    else:
+        rating = "Strong Sell"
+
+    return {
+        "overall": round(overall_score),
+        "valuation": valuation_score,
+        "profitability": profitability_score,
+        "balance_sheet": balance_sheet_score,
+        "cash_flow": cash_flow_score,
+        "dcf": dcf_score,
+        "rating": rating
+    }
+
 def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bull_dcf=None):
     buffer = BytesIO()
 
@@ -780,7 +897,10 @@ if st.button("Generate Memo"):
 
     chart_data = get_stock_chart(ticker)
 
-    st.line_chart(chart_data["Close"])
+    if chart_data is not None and not chart_data.empty and "Close" in chart_data.columns:
+        st.line_chart(chart_data["Close"])
+    else:
+        st.warning("Stock price chart unavailable at the moment.")
 
     st.subheader("📊 Financial Overview")
 
@@ -799,9 +919,30 @@ if st.button("Generate Memo"):
     st.caption(
         f"Sector: {financials.get('sector', 'N/A')} | Data Source: {financials.get('dataSource', 'N/A')}"
     )
+
+    st.subheader("🧠 Investment Scorecard")
+
+    scorecard = calculate_investment_score(financials, base_dcf)
+
+    score_col1, score_col2, score_col3 = st.columns(3)
+
+    score_col1.metric("Overall Score", f"{scorecard['overall']} / 100")
+    score_col2.metric("Suggested Rating", scorecard["rating"])
+    score_col3.metric("DCF Score", f"{scorecard['dcf']} / 100")
+
+    score_col4, score_col5, score_col6 = st.columns(3)
+
+    score_col4.metric("Valuation", f"{scorecard['valuation']} / 100")
+    score_col5.metric("Profitability", f"{scorecard['profitability']} / 100")
+    score_col6.metric("Balance Sheet", f"{scorecard['balance_sheet']} / 100")
+
+    score_col7, _, _ = st.columns(3)
+
+    score_col7.metric("Cash Flow Quality", f"{scorecard['cash_flow']} / 100")
+
     st.subheader("📐 5-Year DCF Scenario Analysis")
 
-    if base_dcf:
+    if bear_dcf and base_dcf and bull_dcf:
 
         scenario_df = pd.DataFrame({
             "Scenario": ["Bear", "Base", "Bull"],
