@@ -738,29 +738,29 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE")
     ]))
 
-        story.append(table)
+    story.append(table)
+    story.append(Spacer(1, 20))
+
+    if chart_data is not None and not chart_data.empty and "Close" in chart_data.columns:
+        story.append(Paragraph("10-Year Stock Price Chart", heading_style))
+
+        chart_buffer = BytesIO()
+
+        plt.figure(figsize=(7, 3))
+        plt.plot(chart_data.index, chart_data["Close"])
+        plt.title(f"{company_name.title()} Stock Price - 10Y")
+        plt.xlabel("Date")
+        plt.ylabel("Price")
+        plt.tight_layout()
+        plt.savefig(chart_buffer, format="png", dpi=200)
+        plt.close()
+
+        chart_buffer.seek(0)
+    
+        story.append(Image(chart_buffer, width=460, height=210))
         story.append(Spacer(1, 20))
 
-        if chart_data is not None and not chart_data.empty and "Close" in chart_data.columns:
-            story.append(Paragraph("10-Year Stock Price Chart", heading_style))
-
-            chart_buffer = BytesIO()
-
-            plt.figure(figsize=(7, 3))
-            plt.plot(chart_data.index, chart_data["Close"])
-            plt.title(f"{company_name.title()} Stock Price - 10Y")
-            plt.xlabel("Date")
-            plt.ylabel("Price")
-            plt.tight_layout()
-            plt.savefig(chart_buffer, format="png", dpi=200)
-            plt.close()
-
-            chart_buffer.seek(0)
-    
-            story.append(Image(chart_buffer, width=460, height=210))
-            story.append(Spacer(1, 20))
-
-        if bear_dcf and base_dcf and bull_dcf:
+    if bear_dcf and base_dcf and bull_dcf:
         story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
 
         dcf_summary_table = [
