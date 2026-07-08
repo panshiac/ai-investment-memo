@@ -5,3 +5,4 @@ pypdf
 yfinance
 yahooquery
 reportlab
+matplotlib
