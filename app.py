@@ -939,6 +939,31 @@ if st.button("Generate Memo"):
     score_col7, _, _ = st.columns(3)
 
     score_col7.metric("Cash Flow Quality", f"{scorecard['cash_flow']} / 100")
+    
+        with st.expander("How the Investment Scorecard is calculated"):
+            st.markdown("""
+            The scorecard is a rule-based summary of the company's financial profile.
+
+            **Overall Score**
+            Weighted average of valuation, profitability, balance sheet strength, cash flow quality, and DCF upside.
+
+            **Valuation**
+            Based mainly on the P/E ratio. Lower P/E ratios generally receive higher scores.
+
+            **Profitability**
+            Based on net profit margin. Higher margins suggest stronger earnings quality.
+
+            **Balance Sheet**
+            Based on debt relative to revenue. Lower debt burden receives a higher score.
+
+            **Cash Flow Quality**
+            Based on free cash flow margin. Strong free cash flow relative to revenue receives a higher score.
+
+            **DCF Score**
+            Based on the base-case DCF upside or downside versus the current market price.
+
+            The scorecard is not a final recommendation by itself. It is a structured diagnostic tool to support the full investment memo.
+            """)
 
     st.subheader("📐 5-Year DCF Scenario Analysis")
 
