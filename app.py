@@ -623,8 +623,67 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
 
     story = []
 
-    story.append(Paragraph(f"{company_name.title()} Investment Memo", title_style))
+    from datetime import datetime
+
+    today = datetime.today().strftime("%d %B %Y")
+
+    story.append(Paragraph("MEMOGEN", title_style))
+
+    story.append(Paragraph(
+        "<font size=16><b>AI Investment Research Report</b></font>",
+        styles["Heading2"]
+    ))
+
+    story.append(Spacer(1, 8))
+
+    story.append(Paragraph(
+        f"<font size=20><b>{company_name.upper()}</b></font>",
+        styles["Heading1"]
+    ))
+
     story.append(Spacer(1, 12))
+    
+    story.append(Paragraph(
+        f"<b>Prepared:</b> {today}",
+        body_style
+    ))
+
+    story.append(Spacer(1, 18))
+    if base_dcf:
+
+        scorecard = calculate_investment_score(financials, base_dcf)
+
+        story.append(Paragraph(
+            "<b>Executive Snapshot</b>",
+            heading_style
+        ))
+
+        story.append(Paragraph(
+            f"<b>Recommendation:</b> {scorecard['rating']}",
+            body_style
+        ))
+
+        story.append(Paragraph(
+            f"<b>Investment Score:</b> {scorecard['overall']} / 100",
+            body_style
+        ))
+
+        story.append(Paragraph(
+            f"<b>Current Price:</b> ${base_dcf['current_price']:.2f}",
+            body_style
+        ))
+
+        story.append(Paragraph(
+            f"<b>Intrinsic Value:</b> ${base_dcf['intrinsic_value_per_share']:.2f}",
+            body_style
+        ))
+
+        story.append(Paragraph(
+            f"<b>Upside / Downside:</b> {base_dcf['upside_downside']:.1f}%",
+            body_style
+        ))
+
+        story.append(Spacer(1, 20))
     if base_dcf:
         story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
 
@@ -944,22 +1003,22 @@ if st.button("Generate Memo"):
         st.markdown("""
         The scorecard is a rule-based summary of the company's financial profile.
 
-        **Overall Score**
+        **Overall Score:**
         Weighted average of valuation, profitability, balance sheet strength, cash flow quality, and DCF upside.
 
-        **Valuation**
+        **Valuation:**
         Based mainly on the P/E ratio. Lower P/E ratios generally receive higher scores.
 
-        **Profitability**
+        **Profitability:**
         Based on net profit margin. Higher margins suggest stronger earnings quality.
 
-        **Balance Sheet**
+        **Balance Sheet:**
         Based on debt relative to revenue. Lower debt burden receives a higher score.
 
-        **Cash Flow Quality**
+        **Cash Flow Quality:**
         Based on free cash flow margin. Strong free cash flow relative to revenue receives a higher score.
 
-        **DCF Score**
+        **DCF Score:**
         Based on the base-case DCF upside or downside versus the current market price.
 
         The scorecard is not a final recommendation by itself. It is a structured diagnostic tool to support the full investment memo.
