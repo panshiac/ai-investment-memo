@@ -656,6 +656,7 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
     ))
 
     story.append(Spacer(1, 18))
+
     if base_dcf:
 
         scorecard = calculate_investment_score(financials, base_dcf)
@@ -693,51 +694,51 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         story.append(Spacer(1, 20))
 
     if bear_dcf and base_dcf and bull_dcf:
-    story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
-
-    dcf_summary_table = [
-        ["Scenario", "Intrinsic Value", "Upside / Downside"],
-        [
-            "Bear",
-            f"${bear_dcf['intrinsic_value_per_share']:.2f}",
-            f"{bear_dcf['upside_downside']:.1f}%"
-        ],
-        [
-            "Base",
-            f"${base_dcf['intrinsic_value_per_share']:.2f}",
-            f"{base_dcf['upside_downside']:.1f}%"
-        ],
-        [
-            "Bull",
-            f"${bull_dcf['intrinsic_value_per_share']:.2f}",
-            f"{bull_dcf['upside_downside']:.1f}%"
+        story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
+    
+        dcf_summary_table = [
+            ["Scenario", "Intrinsic Value", "Upside / Downside"],
+            [
+                "Bear",
+                f"${bear_dcf['intrinsic_value_per_share']:.2f}",
+                f"{bear_dcf['upside_downside']:.1f}%"
+            ],
+            [
+                "Base",
+                f"${base_dcf['intrinsic_value_per_share']:.2f}",
+                f"{base_dcf['upside_downside']:.1f}%"
+            ],
+            [
+                "Bull",
+                f"${bull_dcf['intrinsic_value_per_share']:.2f}",
+                f"{bull_dcf['upside_downside']:.1f}%"
+            ]
         ]
-    ]
 
-    dcf_table = Table(dcf_summary_table, colWidths=[120, 160, 160])
+        dcf_table = Table(dcf_summary_table, colWidths=[120, 160, 160])
 
-    dcf_table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, 0), 11),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
-        ("FONTSIZE", (0, 1), (-1, -1), 10),
-        ("TOPPADDING", (0, 0), (-1, -1), 8),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-    ]))
+        dcf_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 11),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+            ("FONTSIZE", (0, 1), (-1, -1), 10),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ]))
 
-    story.append(dcf_table)
-    story.append(Spacer(1, 8))
+        story.append(dcf_table)
+        story.append(Spacer(1, 8))
 
-    story.append(Paragraph(
-        f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value.",
-        body_style
-    ))
+        story.append(Paragraph(
+            f"Terminal value represents {base_dcf['terminal_value_share']*100:.1f}% of enterprise value.",
+            body_style
+        ))
 
-    story.append(Spacer(1, 20))
+        story.append(Spacer(1, 20))
 
     story.append(Paragraph("Financial Overview", heading_style))
 
