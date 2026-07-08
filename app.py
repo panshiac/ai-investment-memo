@@ -13,8 +13,10 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
     Table,
-    TableStyle
+    TableStyle,
+    Image
 )
+import matplotlib.pyplot as plt
 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -597,7 +599,7 @@ def calculate_investment_score(financials, base_dcf):
         "rating": rating
     }
 
-def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bull_dcf=None):
+def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bull_dcf=None, chart_data=None):
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer, pagesize=A4)
@@ -645,11 +647,58 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         scorecard = calculate_investment_score(financials, base_dcf)
 
         story.append(Paragraph("Executive Snapshot", heading_style))
-        story.append(Paragraph(f"<b>Recommendation:</b> {scorecard['rating']}", body_style))
-        story.append(Paragraph(f"<b>Investment Score:</b> {scorecard['overall']} / 100", body_style))
-        story.append(Paragraph(f"<b>Current Price:</b> ${base_dcf['current_price']:.2f}", body_style))
-        story.append(Paragraph(f"<b>Intrinsic Value:</b> ${base_dcf['intrinsic_value_per_share']:.2f}", body_style))
-        story.append(Paragraph(f"<b>Upside / Downside:</b> {base_dcf['upside_downside']:.1f}%", body_style))
+
+        snapshot_table = [
+            ["Metric", "Value"],
+            ["Recommendation", scorecard["rating"]],
+            ["Investment Score", f"{scorecard['overall']} / 100"],
+            ["Current Price", f"${base_dcf['current_price']:.2f}"],
+            ["Intrinsic Value", f"${base_dcf['intrinsic_value_per_share']:.2f}"],
+            ["Upside / Downside", f"{base_dcf['upside_downside']:.1f}%"]
+        ]
+
+        snapshot = Table(snapshot_table, colWidths=[170, 220])
+
+        snapshot.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0f172a")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ]))
+
+        story.append(snapshot)
+        story.append(Spacer(1, 20))
+    
+        story.append(Paragraph("Investment Scorecard", heading_style))
+
+        scorecard_table = [
+            ["Category", "Score"],
+            ["Overall", f"{scorecard['overall']} / 100"],
+            ["Valuation", f"{scorecard['valuation']} / 100"],
+            ["Profitability", f"{scorecard['profitability']} / 100"],
+            ["Balance Sheet", f"{scorecard['balance_sheet']} / 100"],
+            ["Cash Flow Quality", f"{scorecard['cash_flow']} / 100"],
+            ["DCF", f"{scorecard['dcf']} / 100"]
+        ]
+     
+        score_table = Table(scorecard_table, colWidths=[170, 220])
+
+        score_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ]))
+
+        story.append(score_table)
         story.append(Spacer(1, 20))
 
     story.append(Paragraph("Financial Overview", heading_style))
@@ -689,10 +738,29 @@ def create_pdf(memo, company_name, financials, bear_dcf=None, base_dcf=None, bul
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE")
     ]))
 
-    story.append(table)
-    story.append(Spacer(1, 20))
+        story.append(table)
+        story.append(Spacer(1, 20))
 
-    if bear_dcf and base_dcf and bull_dcf:
+        if chart_data is not None and not chart_data.empty and "Close" in chart_data.columns:
+            story.append(Paragraph("10-Year Stock Price Chart", heading_style))
+
+            chart_buffer = BytesIO()
+
+            plt.figure(figsize=(7, 3))
+            plt.plot(chart_data.index, chart_data["Close"])
+            plt.title(f"{company_name.title()} Stock Price - 10Y")
+            plt.xlabel("Date")
+            plt.ylabel("Price")
+            plt.tight_layout()
+            plt.savefig(chart_buffer, format="png", dpi=200)
+            plt.close()
+
+            chart_buffer.seek(0)
+    
+            story.append(Image(chart_buffer, width=460, height=210))
+            story.append(Spacer(1, 20))
+
+        if bear_dcf and base_dcf and bull_dcf:
         story.append(Paragraph("5-Year DCF Scenario Analysis", heading_style))
 
         dcf_summary_table = [
